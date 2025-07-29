@@ -9,38 +9,38 @@
 
 <h4 id="基础环境搭建"><a href="#基础环境搭建" class="headerlink" title="基础环境搭建"></a>基础环境搭建</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">sudo apt install git</span><br><span class="line">git clone https://gitee.com/derekwin/mininet.git</span><br><span class="line">cd mininet/util</span><br><span class="line">./install.sh -a</span><br></pre></td></tr></table></figure>
 
-<p><img src="/.io//image-20250517090835022.png"></p>
+<p><img src="image-20250517090835022.png"></p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">python3 -m pip install --upgrade pip</span><br><span class="line">python3 -m pip install ryu</span><br><span class="line">echo &#x27;export PATH=$PATH:~/.local/bin&#x27; &gt;&gt; ~/.bashrc</span><br><span class="line">source ~/.bashrc</span><br></pre></td></tr></table></figure>
 
 
 
-<h4 id="环境检查"><a href="#环境检查" class="headerlink" title="环境检查"></a>环境检查</h4><p><img src="/.io//image-20250517090520805.png"></p>
+<h4 id="环境检查"><a href="#环境检查" class="headerlink" title="环境检查"></a>环境检查</h4><p><img src="image-20250517090520805.png"></p>
 <h3 id="建立Mininet与Ryu连接并抓包分析——基础示例"><a href="#建立Mininet与Ryu连接并抓包分析——基础示例" class="headerlink" title="建立Mininet与Ryu连接并抓包分析——基础示例"></a>建立Mininet与Ryu连接并抓包分析——基础示例</h3><h4 id="查看Ryu内置控制器"><a href="#查看Ryu内置控制器" class="headerlink" title="查看Ryu内置控制器"></a>查看Ryu内置控制器</h4><p>输入：</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">find ~ -name &quot;simple_switch.py&quot; 2&gt;/dev/null</span><br><span class="line">cd /home/sdn/.local/lib/python3.8/site-packages/ryu/app/</span><br><span class="line">ls</span><br></pre></td></tr></table></figure>
 
-<p><img src="/.io//image-20250517091259827.png"></p>
+<p><img src="image-20250517091259827.png"></p>
 <h4 id="启动Ryu控制器"><a href="#启动Ryu控制器" class="headerlink" title="启动Ryu控制器"></a>启动Ryu控制器</h4><p>输入：</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ryu-manager simple_switch_13.py</span><br></pre></td></tr></table></figure>
 
-<p><img src="/.io//image-20250517091621247.png"></p>
+<p><img src="image-20250517091621247.png"></p>
 <h4 id="利用Mininet工具构建网络拓扑"><a href="#利用Mininet工具构建网络拓扑" class="headerlink" title="利用Mininet工具构建网络拓扑"></a>利用Mininet工具构建网络拓扑</h4><p>拓扑：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">graph TD</span><br><span class="line">    h1[Host h1] --&gt; s1[Switch s1]</span><br><span class="line">    h2[Host h2] --&gt; s1</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
 <p>输入：</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo mn --controller=remote,ip=127.0.0.1,port=6633 --switch ovsk,protocols=OpenFlow13 --topo single,2</span><br></pre></td></tr></table></figure>
 
-<p><img src="/.io//image-20250517092132171.png"></p>
+<p><img src="image-20250517092132171.png"></p>
 <h4 id="利用抓包工具Wireshark分析OpenFlow协议"><a href="#利用抓包工具Wireshark分析OpenFlow协议" class="headerlink" title="利用抓包工具Wireshark分析OpenFlow协议"></a>利用抓包工具Wireshark分析OpenFlow协议</h4><p>输入：</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo wireshark</span><br></pre></td></tr></table></figure>
 
 <p>使用any模式抓包，结果如下：</p>
-<p><img src="/.io//image-20250517092514807.png"></p>
-<p><img src="/.io//image-20250517092648930.png"></p>
+<p><img src="image-20250517092514807.png"></p>
+<p><img src="image-20250517092648930.png"></p>
 <h3 id="建立Mininet与Ryu连接并抓包分析——复杂拓扑"><a href="#建立Mininet与Ryu连接并抓包分析——复杂拓扑" class="headerlink" title="建立Mininet与Ryu连接并抓包分析——复杂拓扑"></a>建立Mininet与Ryu连接并抓包分析——复杂拓扑</h3><p>拓扑图：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">graph TD</span><br><span class="line">    h1[Host h1] --&gt; s1[Switch s1]</span><br><span class="line">    h2[Host h2] --&gt; s1</span><br><span class="line">    s1 --&gt; s2[Switch s2]</span><br><span class="line">    s2 --&gt; s3[Switch s3]</span><br><span class="line">    h3[Host h3] --&gt; s2</span><br><span class="line">    h4[Host h4] --&gt; s3</span><br><span class="line">    h5[Host h5] --&gt; s3</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
 <p>编写拓扑python脚本：</p>
-<p><img src="/.io//image-20250517094529770.png"></p>
+<p><img src="image-20250517094529770.png"></p>
 <p>运行控制器：</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ryu-manager ryu.app.simple_switch_13</span><br></pre></td></tr></table></figure>
 
@@ -50,25 +50,25 @@
 <p>检查连通性：</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pingall</span><br></pre></td></tr></table></figure>
 
-<p><img src="/.io//image-20250517094711979.png"></p>
+<p><img src="image-20250517094711979.png"></p>
 <p>抓包：</p>
-<p><img src="/.io//image-20250517095239951.png"></p>
+<p><img src="image-20250517095239951.png"></p>
 <p>注意：抓包可以使用过滤<code>openflow_v4</code>，抓包如果打不开，使用<code>sudo chown sdn:sdn *.pcapng</code>把root权限的抓包文件权限下放。</p>
 <p>抓包分析详见实验分析一节。</p>
 <h2 id="实验分析"><a href="#实验分析" class="headerlink" title="实验分析"></a>实验分析</h2><p>在分析过程中，由于我们设定了6633是控制器的端口，因此，我们可以在抓包时通过TCP协议的源端口和目的端口来确定该消息是发向控制器，或从控制器接收。</p>
 <p>在我们这次抓包中，端口出现了45696、45710、45720和6633，其中6633默认是 Ryu 控制器监听的端口，45696、45710、45720是由 Mininet 中的交换机主动发起连接时分配的临时端口，即交换机（Open vSwitch）客户端端口。</p>
 <p>我们通过TCP的源和目的端口确定数据流向。</p>
 <p>在抓包时可以通过过滤<code>openflow_v4</code>便于观察。</p>
-<p><img src="/.io//image-20250517105128071.png"></p>
-<h3 id="宏观报文协作流程图"><a href="#宏观报文协作流程图" class="headerlink" title="宏观报文协作流程图"></a>宏观报文协作流程图</h3><p><img src="/.io//c.png"></p>
-<h3 id="HELLO"><a href="#HELLO" class="headerlink" title="HELLO"></a>HELLO</h3><p><img src="/.io//image-20250517095744124.png"></p>
+<p><img src="image-20250517105128071.png"></p>
+<h3 id="宏观报文协作流程图"><a href="#宏观报文协作流程图" class="headerlink" title="宏观报文协作流程图"></a>宏观报文协作流程图</h3><p><img src="c.png"></p>
+<h3 id="HELLO"><a href="#HELLO" class="headerlink" title="HELLO"></a>HELLO</h3><p><img src="image-20250517095744124.png"></p>
 <h4 id="主要功能及作用分析"><a href="#主要功能及作用分析" class="headerlink" title="主要功能及作用分析"></a>主要功能及作用分析</h4><p>HELLO 报文是 OpenFlow 协议中的起始消息，用于交换机和控制器之间建立连接时进行协议版本协商。它标志着控制器和交换机之间控制通道的正式建立。HELLO 报文是双向的，控制器和交换机均需要主动发送，双方确认后才能继续后续的功能协商和能力请求。</p>
 <h4 id="主要字段分析"><a href="#主要字段分析" class="headerlink" title="主要字段分析"></a>主要字段分析</h4><p>Version: 报文中显示为 1.3 (0x04)，表明该连接使用的是 OpenFlow 1.3 协议。</p>
 <p> Type: OFPT_HELLO (0)，表示该消息类型为 HELLO。</p>
 <p>Length: 报文长度，显示为 8 字节，表示标准的空载 HELLO 报文。</p>
 <p>Transaction ID: 此字段为请求和响应配对提供唯一标识符，用于逻辑匹配。该值为 2116093918，是一个随机生成的无符号整数。</p>
 <h4 id="报文出现阶段分析"><a href="#报文出现阶段分析" class="headerlink" title="报文出现阶段分析"></a>报文出现阶段分析</h4><p>HELLO 报文出现在 OpenFlow 控制通道初始化阶段，通常在控制器刚刚与交换机建立 TCP 连接后立即互相发送。该报文是双方握手的第一步，用于确定后续通信所使用的 OpenFlow 协议版本。如果双方版本不一致，则连接可能被拒绝。Wireshark 中显示的这条报文，是控制器（或交换机）在成功建立 TCP 握手后立即发出的，标志着OpenFlow协议通信正式开始。</p>
-<h3 id="PORT-STATUS"><a href="#PORT-STATUS" class="headerlink" title="PORT_STATUS"></a>PORT_STATUS</h3><p><img src="/.io//image-20250517095920670.png"></p>
+<h3 id="PORT-STATUS"><a href="#PORT-STATUS" class="headerlink" title="PORT_STATUS"></a>PORT_STATUS</h3><p><img src="image-20250517095920670.png"></p>
 <h4 id="主要功能及作用分析-1"><a href="#主要功能及作用分析-1" class="headerlink" title="主要功能及作用分析"></a>主要功能及作用分析</h4><p>PORT_STATUS 报文用于通知控制器，交换机端口发生了变更。它的作用是保持控制器对物理网络状态的同步，及时获知端口的新增、删除或修改状态，以便进行路由重计算、流表更新或故障检测。它由交换机主动上报，不依赖控制器请求。</p>
 <h4 id="主要字段分析-1"><a href="#主要字段分析-1" class="headerlink" title="主要字段分析"></a>主要字段分析</h4><p>Version: 1.3 (0x04)，表示使用 OpenFlow 1.3 协议</p>
 <p>Type: OFPT_PORT_STATUS (12)，该报文类型编号为12，表示端口状态变更通知</p>
@@ -77,14 +77,14 @@
 <p> Reason: OFPPR_MODIFY (2)，表示端口状态发生修改</p>
 <p>Port:  Port no: OFPP_LOCAL（本地端口编号）；Hw addr: 12:94:c7:af:23:43，为本地接口的 MAC 地址；Name: s1，为端口名称；Config、State、Current、Advertised、Supported、Peer：这些字段共同描述了端口的配置、状态和协商能力。</p>
 <h4 id="报文出现阶段分析-1"><a href="#报文出现阶段分析-1" class="headerlink" title="报文出现阶段分析"></a>报文出现阶段分析</h4><p>PORT_STATUS 报文由交换机在端口状态发生变化时主动发出。常见的触发时机包括控制器刚连接后（交换机上报当前端口情况）、端口启用或禁用、链路断开、接口名更改等。它通常紧跟在 FEATURES_REPLY 报文之后出现，也可能在网络运行过程中动态出现，是动态状态感知机制的一部分。此处报文显示为修改类型，说明某个端口参数发生了更新。</p>
-<h3 id="FEATURES-REQUEST"><a href="#FEATURES-REQUEST" class="headerlink" title="FEATURES_REQUEST"></a>FEATURES_REQUEST</h3><p><img src="/.io//image-20250517095856403.png"></p>
+<h3 id="FEATURES-REQUEST"><a href="#FEATURES-REQUEST" class="headerlink" title="FEATURES_REQUEST"></a>FEATURES_REQUEST</h3><p><img src="image-20250517095856403.png"></p>
 <h4 id="主要功能及作用分析-2"><a href="#主要功能及作用分析-2" class="headerlink" title="主要功能及作用分析"></a>主要功能及作用分析</h4><p>FEATURES_REQUEST 报文用于控制器主动向交换机询问其基本特征和能力信息。这是控制器获取交换机硬件状态、端口列表、支持能力（如组表、流表数目等）的关键步骤。控制器基于该报文的响应结果决定后续如何进行流表下发和路径控制等行为。</p>
 <h4 id="主要字段分析-2"><a href="#主要字段分析-2" class="headerlink" title="主要字段分析"></a>主要字段分析</h4><p>Version: 1.3 (0x04)，表示使用 OpenFlow 1.3 协议</p>
 <p> Type: OFPT_FEATURES_REQUEST (5)，表示该报文为功能请求报文，编号为5</p>
 <p> Length: 8，表示该报文为无载荷的标准请求格式，仅包含头部</p>
 <p>Transaction ID: 2116093919，为此次请求分配的唯一事务编号，控制器后续通过该 ID 匹配交换机返回的 FEATURES_REPLY 报文</p>
 <h4 id="报文出现阶段分析-2"><a href="#报文出现阶段分析-2" class="headerlink" title="报文出现阶段分析"></a>报文出现阶段分析</h4><p>FEATURES_REQUEST 报文在控制器与交换机完成 HELLO 报文交换后立即发出，属于连接建立流程的第二阶段。控制器通过发送该报文来探测交换机的资源能力，确认其支持的特性，为后续的流表控制与端口管理提供基础信息。它是控制器获取网络拓扑与物理结构的第一步，在建立控制通道初期就会触发。</p>
-<h3 id="FEATURES-REPLY"><a href="#FEATURES-REPLY" class="headerlink" title="FEATURES_REPLY"></a>FEATURES_REPLY</h3><p><img src="/.io//image-20250517095941696.png"></p>
+<h3 id="FEATURES-REPLY"><a href="#FEATURES-REPLY" class="headerlink" title="FEATURES_REPLY"></a>FEATURES_REPLY</h3><p><img src="image-20250517095941696.png"></p>
 <h4 id="主要功能及作用分析-3"><a href="#主要功能及作用分析-3" class="headerlink" title="主要功能及作用分析"></a>主要功能及作用分析</h4><p>FEATURES_REPLY 报文是交换机对控制器发送的 FEATURES_REQUEST 报文的响应。其主要作用是向控制器报告交换机的基本硬件能力和配置信息，包括 datapath ID、流表数量、端口缓冲区、支持的能力（如流统计、组表、表统计等），便于控制器根据这些信息作出决策，进行路径控制、策略下发等。</p>
 <h4 id="主要字段分析-3"><a href="#主要字段分析-3" class="headerlink" title="主要字段分析"></a>主要字段分析</h4><p>Version: 1.3 (0x04)，表示使用的是 OpenFlow 1.3 协议版本</p>
 <p>Type: OFPT_FEATURES_REPLY (6)，该类型编号为 6，表示功能应答报文</p>
@@ -96,7 +96,7 @@
 <p>auxiliary_id: 0，标明这是主连接（不是辅助连接）</p>
 <p>capabilities: 0x0000004f，该字段以比特位标识交换机支持的能力</p>
 <h4 id="报文出现阶段分析-3"><a href="#报文出现阶段分析-3" class="headerlink" title="报文出现阶段分析"></a>报文出现阶段分析</h4><p>FEATURES_REPLY 报文出现在控制器与交换机建立连接初期，紧随 HELLO 和 FEATURES_REQUEST 之后。当控制器成功发送 FEATURES_REQUEST 后，交换机会立刻返回 FEATURES_REPLY，汇报自身能力。控制器根据这些信息构建全局拓扑图和流表策略，是控制平面了解数据平面的入口。该报文是双向能力同步的关键步骤之一。</p>
-<h3 id="FLOW-MOD"><a href="#FLOW-MOD" class="headerlink" title="FLOW_MOD"></a>FLOW_MOD</h3><p><img src="/.io//image-20250517100021798.png"></p>
+<h3 id="FLOW-MOD"><a href="#FLOW-MOD" class="headerlink" title="FLOW_MOD"></a>FLOW_MOD</h3><p><img src="image-20250517100021798.png"></p>
 <h4 id="主要功能及作用分析-4"><a href="#主要功能及作用分析-4" class="headerlink" title="主要功能及作用分析"></a>主要功能及作用分析</h4><p>FLOW_MOD 报文用于控制器向交换机下发流表项，实现对数据平面转发行为的控制。控制器可以通过该报文添加、修改或删除指定规则的流表项，从而控制交换机对匹配数据包的处理行为，是SDN中“控制与转发分离”理念的直接体现。常用于响应 PACKET_IN 报文、部署策略路由等场景。</p>
 <h4 id="主要字段分析-4"><a href="#主要字段分析-4" class="headerlink" title="主要字段分析"></a>主要字段分析</h4><p>Version: 1.3 (0x04)，表示使用 OpenFlow 1.3 协议</p>
 <p>Type: OFPT_FLOW_MOD (14)，该类型编号为14，表示流表修改报文</p>
@@ -120,7 +120,7 @@
 <li>Action：表示转发动作</li>
 </ul>
 <h4 id="报文出现阶段分析-4"><a href="#报文出现阶段分析-4" class="headerlink" title="报文出现阶段分析"></a>报文出现阶段分析</h4><p>FLOW_MOD 报文通常出现在控制器接收到 PACKET_IN 报文之后，用于向交换机下发具体的流表处理规则。它也可由控制器主动部署策略时直接下发。该报文是整个 OpenFlow 协议中实现转发控制的核心机制，决定了数据包如何被交换机匹配和处理，是 SDN 控制器调度能力的核心体现。在实际网络运行中，会频繁出现。</p>
-<h3 id="PACKET-IN"><a href="#PACKET-IN" class="headerlink" title="PACKET_IN"></a>PACKET_IN</h3><p><img src="/.io//image-20250517100129873.png"></p>
+<h3 id="PACKET-IN"><a href="#PACKET-IN" class="headerlink" title="PACKET_IN"></a>PACKET_IN</h3><p><img src="image-20250517100129873.png"></p>
 <h4 id="主要功能及作用分析-5"><a href="#主要功能及作用分析-5" class="headerlink" title="主要功能及作用分析"></a>主要功能及作用分析</h4><p>PACKET_IN 报文用于当交换机接收到一个数据包，但其不匹配当前流表中任何规则时，将该数据包上送给控制器进行处理。此机制是 SDN 中实现“集中控制”的关键之一。控制器接收到 PACKET_IN 后可以决定是否下发新流表（FLOW_MOD）或通过 PACKET_OUT 直接处理该数据包。</p>
 <h4 id="主要字段分析-5"><a href="#主要字段分析-5" class="headerlink" title="主要字段分析"></a>主要字段分析</h4><p>Version: 1.3 (0x04)，OpenFlow 1.3 协议版本</p>
 <p> Type: OFPT_PACKET_IN (10)，表示该报文为数据上送类型</p>
@@ -141,7 +141,7 @@
 <li>ICMPv6: 显示该数据包为 ICMPv6 协议的邻居请求报文（Neighbor Solicitation）</li>
 </ul>
 <h4 id="报文出现阶段分析-5"><a href="#报文出现阶段分析-5" class="headerlink" title="报文出现阶段分析"></a>报文出现阶段分析</h4><p>PACKET_IN 报文出现在交换机未能找到匹配流表项处理某个入包时。此时，交换机将该包或包头（依据配置）封装为 PACKET_IN 上送给控制器，等待控制器决策。它通常是网络中通信刚启动时，尚未学习 MAC、未建立路径时的首个动作，是控制器下发 FLOW_MOD 的直接前提。在本抓包中，此报文为 ICMPv6 邻居发现请求，由于未匹配流表，因此触发 PACKET_IN。</p>
-<h3 id="PACKET-OUT"><a href="#PACKET-OUT" class="headerlink" title="PACKET_OUT"></a>PACKET_OUT</h3><p><img src="/.io//image-20250517100143253.png"></p>
+<h3 id="PACKET-OUT"><a href="#PACKET-OUT" class="headerlink" title="PACKET_OUT"></a>PACKET_OUT</h3><p><img src="image-20250517100143253.png"></p>
 <h4 id="主要功能及作用分析-6"><a href="#主要功能及作用分析-6" class="headerlink" title="主要功能及作用分析"></a>主要功能及作用分析</h4><p>PACKET_OUT 报文用于控制器将原始数据包从指定端口下发回交换机处理，用于实现立即的数据转发。它通常在控制器收到 PACKET_IN 报文后，决定处理策略时使用。控制器可以通过 PACKET_OUT 指定将数据包发送到某个端口，广播出去，或丢弃等，是 SDN 控制器主动干预转发行为的重要方式。</p>
 <h4 id="主要字段分析-6"><a href="#主要字段分析-6" class="headerlink" title="主要字段分析"></a>主要字段分析</h4><p>Version: 1.3 (0x04)，表示使用 OpenFlow 1.3 协议</p>
 <p> Type: OFPT_PACKET_OUT (13)，报文类型编号为 13，表示下发原始数据包</p>
@@ -203,15 +203,15 @@
 <h2 id="实验详细步骤-1"><a href="#实验详细步骤-1" class="headerlink" title="实验详细步骤"></a>实验详细步骤</h2><h3 id="启动实验环境"><a href="#启动实验环境" class="headerlink" title="启动实验环境"></a>启动实验环境</h3><p>安装 curl。curl 是一个开源命令行工具，通过各类网络协议传输数据，支持 get、post、delete 等 http 方法，本实验中用于进行下发、查看、删除流表。</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt install curl</span><br></pre></td></tr></table></figure>
 
-<p><img src="/.io//image-20250517150631831.png"></p>
+<p><img src="image-20250517150631831.png"></p>
 <p>终端1启动Ryu控制器。它加载了两个 Python 模块， <code>ryu.app.simple_switch_13</code>实现一个基于 OpenFlow 1.3 的二层交换机，会自动学习主机的 MAC 地址，并下发对应的流表规则。 <code>ryu.app.ofctl_rest</code>提供 REST API 接口，支持使用 <code>curl</code> 发 HTTP 请求来管理流表。</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ryu-manager ryu.app.ofctl_rest ryu.app.simple_switch_13</span><br></pre></td></tr></table></figure>
 
-<p><img src="/.io//image-20250517150816292.png"></p>
+<p><img src="image-20250517150816292.png"></p>
 <p>终端2启动Mininet拓扑，创建两层树形拓扑。</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo mn --controller remote --topo tree,depth=2</span><br></pre></td></tr></table></figure>
 
-<p><img src="/.io//image-20250517150847043.png"></p>
+<p><img src="image-20250517150847043.png"></p>
 <p>拓扑图如下</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">graph TD</span><br><span class="line">    s1[Switch s1] --&gt; s2[Switch s2]</span><br><span class="line">    s1 --&gt; s3[Switch s3]</span><br><span class="line">    </span><br><span class="line">    s2[Switch s2] --&gt; h1[Host h1]</span><br><span class="line">    s2 --&gt; h2[Host h2]</span><br><span class="line">    s3 --&gt; h3[Host h3]</span><br><span class="line">    s3 --&gt; h4[Host h4]</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
@@ -220,43 +220,43 @@
 <p>使用net查看拓扑</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">net</span><br></pre></td></tr></table></figure>
 
-<p><img src="/.io//image-20250517150912599.png"></p>
+<p><img src="image-20250517150912599.png"></p>
 <h3 id="实现二层交换"><a href="#实现二层交换" class="headerlink" title="实现二层交换"></a>实现二层交换</h3><p>测试连通。Ryu 的 simple_switch_13 已经实现了二层自学习交换功能，无需额外配置即可连通。</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pingall</span><br></pre></td></tr></table></figure>
 
-<p><img src="/.io//image-20250517151321854.png"></p>
+<p><img src="image-20250517151321854.png"></p>
 <p>在终端3查看交换机s1流表，已经自动学习MAC地址。</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl http://127.0.0.1:8080/stats/flow/1</span><br></pre></td></tr></table></figure>
 
-<p><img src="/.io//image-20250517151356934.png"></p>
+<p><img src="image-20250517151356934.png"></p>
 <p>不美观，我们可以用 <code>python3 -m json.tool</code> 让输出加上 pretty print。</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl http://127.0.0.1:8080/stats/flow/1 | python3 -m json.tool</span><br></pre></td></tr></table></figure>
 
-<p><img src="/.io//image-20250517151825276.png"></p>
+<p><img src="image-20250517151825276.png"></p>
 <p>（截图很长，这里不放全部内容了）</p>
 <p>另一种查看s1流表的方式</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo ovs-ofctl -O OpenFlow13 dump-flows s1</span><br></pre></td></tr></table></figure>
 
-<p><img src="/.io//image-20250517151432236.png"></p>
+<p><img src="image-20250517151432236.png"></p>
 <h3 id="下发流表，流表匹配与数据包处理"><a href="#下发流表，流表匹配与数据包处理" class="headerlink" title="下发流表，流表匹配与数据包处理"></a>下发流表，流表匹配与数据包处理</h3><p>删除s1的所有流表</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -X POST -d &#x27;&#123;&quot;dpid&quot;:1,&quot;match&quot;:&#123;&#125;&#125;&#x27; http://127.0.0.1:8080/stats/flowentry/delete</span><br></pre></td></tr></table></figure>
 
-<p><img src="/.io//image-20250517152116646.png"></p>
+<p><img src="image-20250517152116646.png"></p>
 <p>再次查看s1流表发现为空</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl http://127.0.0.1:8080/stats/flow/1</span><br></pre></td></tr></table></figure>
 
-<p><img src="/.io//image-20250517152131043.png"></p>
+<p><img src="image-20250517152131043.png"></p>
 <p>尝试 pingall，仅有h1和h2之间、h3和h4之间能ping通。</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pingall</span><br></pre></td></tr></table></figure>
 
-<p><img src="/.io//image-20250517152331901.png"></p>
+<p><img src="image-20250517152331901.png"></p>
 <p>查看h1的mac地址</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">h1 ifconfig</span><br></pre></td></tr></table></figure>
 
 <p>查看h3的mac地址</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">h3 ifconfig</span><br></pre></td></tr></table></figure>
 
-<p><img src="/.io//image-20250517152401607.png"></p>
+<p><img src="image-20250517152401607.png"></p>
 <p>记录一下MAC地址</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">b2:84:cc:df:e0:53</span><br><span class="line">42:f6:00:b0:c6:6f</span><br></pre></td></tr></table></figure>
 
@@ -266,12 +266,12 @@
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">curl -X POST -d &#x27;&#123; </span><br><span class="line">  &quot;dpid&quot;: 1, </span><br><span class="line">  &quot;priority&quot;: 100, </span><br><span class="line">  &quot;match&quot;: &#123; </span><br><span class="line">    &quot;in_port&quot;: 1, </span><br><span class="line">    &quot;dl_src&quot;: &quot;b2:84:cc:df:e0:53&quot;, </span><br><span class="line">    &quot;dl_dst&quot;: &quot;42:f6:00:b0:c6:6f&quot; </span><br><span class="line">  &#125;, </span><br><span class="line">  &quot;actions&quot;: [&#123;&quot;type&quot;: &quot;OUTPUT&quot;, &quot;port&quot;: 2&#125;] </span><br><span class="line">&#125;&#x27; http://127.0.0.1:8080/stats/flowentry/add</span><br></pre></td></tr></table></figure>
 
 <p>这个命令的含义是：如果有从端口1进来的数据包，源MAC是 h1（<code>b2:84:cc:df:e0:53</code>），目标MAC是 h3（<code>42:f6:00:b0:c6:6f</code>），就将它转发到端口2。</p>
-<p><img src="/.io//image-20250517152802067.png"></p>
+<p><img src="image-20250517152802067.png"></p>
 <p>尝试ping，依然无法连通</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pingall</span><br></pre></td></tr></table></figure>
 
-<p><img src="/.io//image-20250517152914379.png"></p>
-<p><img src="/.io//image-20250517152858628.png"></p>
+<p><img src="image-20250517152914379.png"></p>
+<p><img src="image-20250517152858628.png"></p>
 <p>给s1添加一个用于h1广播的流表</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">curl -X POST -d &#x27;&#123; </span><br><span class="line">  &quot;dpid&quot;: 1, </span><br><span class="line">  &quot;priority&quot;: 100, </span><br><span class="line">  &quot;match&quot;: &#123; </span><br><span class="line">    &quot;in_port&quot;: 1, </span><br><span class="line">    &quot;dl_src&quot;: &quot;b2:84:cc:df:e0:53&quot;, </span><br><span class="line">    &quot;dl_dst&quot;: &quot;ff:ff:ff:ff:ff:ff&quot; </span><br><span class="line">  &#125;, </span><br><span class="line">  &quot;actions&quot;: [&#123;&quot;type&quot;: &quot;OUTPUT&quot;, &quot;port&quot;: 2&#125;] </span><br><span class="line">&#125;&#x27; http://127.0.0.1:8080/stats/flowentry/add</span><br></pre></td></tr></table></figure>
 
@@ -280,15 +280,15 @@
 <p>给s1添加一个流表，源地址h3，目标地址h1，这里注意端口号！！！<code>in_port</code> 表示数据包是从交换机的哪一个端口进入的，在 OpenFlow 中，交换机有多个端口（比如 <code>s1-eth1</code>, <code>s1-eth2</code> 等），每个端口都有一个编号（如 1、2、3…），控制器可以设置“只有从特定端口进入的数据包”才匹配这条规则。同时，发出端口也需要配置。</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">curl -X POST -d &#x27;&#123; </span><br><span class="line">  &quot;dpid&quot;: 1, </span><br><span class="line">  &quot;priority&quot;: 100, </span><br><span class="line">  &quot;match&quot;: &#123; </span><br><span class="line">    &quot;in_port&quot;: 2, </span><br><span class="line">    &quot;dl_src&quot;: &quot;42:f6:00:b0:c6:6f&quot;, </span><br><span class="line">    &quot;dl_dst&quot;: &quot;b2:84:cc:df:e0:53&quot; </span><br><span class="line">  &#125;, </span><br><span class="line">  &quot;actions&quot;: [&#123;&quot;type&quot;: &quot;OUTPUT&quot;, &quot;port&quot;: 1&#125;] </span><br><span class="line">&#125;&#x27; http://127.0.0.1:8080/stats/flowentry/add</span><br></pre></td></tr></table></figure>
 
-<p><img src="/.io//image-20250517160007904.png"></p>
+<p><img src="image-20250517160007904.png"></p>
 <p>尝试ping，成功连通h1-h3。</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pingall</span><br></pre></td></tr></table></figure>
 
-<p><img src="/.io//image-20250517160047750.png"></p>
+<p><img src="image-20250517160047750.png"></p>
 <p>查看s1的流表项，包含我们刚才配置的三项。</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo ovs-ofctl -O OpenFlow13 dump-flows s1</span><br></pre></td></tr></table></figure>
 
-<p><img src="/.io//image-20250517160111585.png"></p>
+<p><img src="image-20250517160111585.png"></p>
 <h2 id="实验分析-1"><a href="#实验分析-1" class="headerlink" title="实验分析"></a>实验分析</h2><h3 id="思考题1：两种查看流表的方式有什么不同？这些流表表示了什么信息？"><a href="#思考题1：两种查看流表的方式有什么不同？这些流表表示了什么信息？" class="headerlink" title="思考题1：两种查看流表的方式有什么不同？这些流表表示了什么信息？"></a>思考题1：两种查看流表的方式有什么不同？这些流表表示了什么信息？</h3><h4 id="使用-REST-API（-curl-命令）"><a href="#使用-REST-API（-curl-命令）" class="headerlink" title="使用 REST API（ curl 命令）"></a>使用 REST API（ curl 命令）</h4><p>  <code>curl http://127.0.0.1:8080/stats/flow/1</code> 通过 HTTP 请求向控制器查询流表信息。这种方式展示的数据结构是 JSON。</p>
 <figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;priority&quot;</span><span class="punctuation">:</span> <span class="number">100</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;cookie&quot;</span><span class="punctuation">:</span> <span class="number">0</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;idle_timeout&quot;</span><span class="punctuation">:</span> <span class="number">0</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;hard_timeout&quot;</span><span class="punctuation">:</span> <span class="number">0</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;byte_count&quot;</span><span class="punctuation">:</span> <span class="number">238</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;duration_sec&quot;</span><span class="punctuation">:</span> <span class="number">1773</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;duration_nsec&quot;</span><span class="punctuation">:</span> <span class="number">916000000</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;packet_count&quot;</span><span class="punctuation">:</span> <span class="number">3</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;length&quot;</span><span class="punctuation">:</span> <span class="number">104</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;flags&quot;</span><span class="punctuation">:</span> <span class="number">0</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;actions&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="string">&quot;OUTPUT:2&quot;</span><span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;match&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;in_port&quot;</span><span class="punctuation">:</span> <span class="number">1</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;dl_src&quot;</span><span class="punctuation">:</span> <span class="string">&quot;b2:84:cc:df:e0:53&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;dl_dst&quot;</span><span class="punctuation">:</span> <span class="string">&quot;42:f6:00:b0:c6:6f&quot;</span></span><br><span class="line">  <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;table_id&quot;</span><span class="punctuation">:</span> <span class="number">0</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
@@ -430,7 +430,7 @@
 </ul>
 <p>我们安装的那条流表只匹配了<code>dl_dst = h3 的 MAC</code>（单播），但 ARP 请求包的目标地址是 <code>ff:ff:ff:ff:ff:ff</code>（广播），所以该数据包并不会命中安装的流表规则。</p>
 <p>没有匹配的流表项 → OVS 将包封装为 <code>PACKET_IN</code> → 发给控制器。</p>
-<p><img src="/.io//image-20250517165945894.png"></p>
+<p><img src="image-20250517165945894.png"></p>
 <p>Ryu 控制台打印说明大量 ARP 请求（广播）未被匹配流表。所有这些 <code>packet in</code> 日志都显示 <code>dl_dst = ff:ff:ff:ff:ff:ff</code>，即都是<strong>广播包</strong>。这些包没有命中任何流表项，被交换机上传到了控制器。</p>
 <p>具体的顺序图如下：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">sequenceDiagram</span><br><span class="line">    participant h1</span><br><span class="line">    participant s1</span><br><span class="line">    participant Controller</span><br><span class="line">    participant h3</span><br><span class="line"></span><br><span class="line">    h1-&gt;&gt;s1: ARP Request (dl_dst = ff:ff:ff:ff:ff:ff)</span><br><span class="line">    alt 没有匹配流表</span><br><span class="line">        s1-&gt;&gt;Controller: Packet-In (dl_dst=broadcast)</span><br><span class="line">        Controller--&gt;&gt;s1: 无下发</span><br><span class="line">        s1--x h3: 丢弃</span><br><span class="line">    end</span><br><span class="line"></span><br></pre></td></tr></table></figure>
@@ -451,7 +451,7 @@
 <p>使用以下命令查看各交换机端口编号：</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo ovs-ofctl -O OpenFlow13 show s1</span><br></pre></td></tr></table></figure>
 
-<p><img src="/.io//image-20250517153809609.png"></p>
+<p><img src="image-20250517153809609.png"></p>
 <p>也即</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1(s1-eth1)  → 对应 h1/h3 到 s1 的一端  </span><br><span class="line">2(s1-eth2)  → 对应 s1 到 s2/s3 的另一端</span><br></pre></td></tr></table></figure>
 
@@ -462,9 +462,9 @@
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -X POST -d &#x27;&#123;&quot;dpid&quot;:1,&quot;match&quot;:&#123;&#125;&#125;&#x27; http://127.0.0.1:8080/stats/flowentry/delete</span><br></pre></td></tr></table></figure>
 
 <p>重新配置后再次ping，h1-h3成功连通</p>
-<p><img src="/.io//image-20250517160029615.png"></p>
+<p><img src="image-20250517160029615.png"></p>
 <h2 id="实验心得-1"><a href="#实验心得-1" class="headerlink" title="实验心得"></a>实验心得</h2><p>通过本次实验，我深入理解并掌握了OpenFlow协议中的流表控制机制，了解了如何借助Ryu控制器对交换机流表进行动态管理。</p>
 <p>实验的核心部分是流表操作与数据包处理。在默认的simple_switch_13控制器下，交换机会自动学习主机的MAC地址并下发流表。我通过<code>curl http://127.0.0.1:8080/stats/flow/1</code>以及<code>sudo ovs-ofctl -O OpenFlow13 dump-flows s1</code>等命令分别查看流表状态，逐步熟悉了各个字段（如match字段中的in_port、dl_src、dl_dst，actions字段中的输出端口等）的含义。</p>
 <p>在删除流表项后，通过对pingall测试结果的分析，我体会到了流表配置对于网络通信路径的关键作用。尤其是在需要手动配置流表的阶段，我需要精确地写出match匹配条件和对应的actions输出动作。中间曾遇到由于端口号、MAC地址、方向错误导致的通信失败，但通过不断地验证和分析<code>ryu</code>终端的packet in输出，我最终成功实现了从h1到h3的点对点通信。</p>
 <p>总体而言，这次实验不仅加深了我对流表机制及OpenFlow协议的理解，更锻炼了我通过抓包、命令分析和逻辑推理来排查问题的能力。</p>
-</div><div class="tags"><ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../../../tags/OpenFlow/" rel="tag">OpenFlow</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../../../tags/SDN/" rel="tag">SDN</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../../../tags/%E7%8E%B0%E4%BB%A3%E4%BA%A4%E6%8D%A2%E5%8E%9F%E7%90%86/" rel="tag">现代交换原理</a></li></ul></div><div class="post-nav"><a class="pre" href="../../../06/10/Spring-%E5%85%A8%E6%A0%88%E5%BC%80%E5%8F%91%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">Spring-全栈开发学习笔记</a><a class="next" href="../../../03/18/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E8%AF%BE%E7%A8%8B%E8%AE%BE%E8%AE%A1/">操作系统课程设计</a></div></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar"><div class="widget"><form class="search-form" action="//www.google.com/search" method="get" accept-charset="utf-8" target="_blank"><input type="text" name="q" maxlength="20" placeholder="Search"/><input type="hidden" name="sitesearch" value="https://trenchance2022.github.io"/></form></div><div class="widget"><div class="author-info"><a class="info-avatar" href="/about/" title="About"><img class="nofancybox" src="/img/trenchance.jpg"/></a><p>Give it your best shot.</p><a class="info-icon" href="https://github.com/trenchance2022" title="Github" target="_blank" style="margin-inline:5px"><img class="nofancybox" src="../../../../img/github.png" style="width: 20px; height: 20px; margin-inline:5px; vertical-align: middle;"/></a><a class="info-icon" href="https://b23.tv/CPgDyCs" title="Bilibili" target="_blank" style="margin-inline:5px"><img class="nofancybox" src="../../../../img/bilibili.png" style="width: 20px; height: 20px; margin-inline:5px; vertical-align: middle;"/></a><a class="info-icon" href="https://www.xiaohongshu.com/user/profile/62bece15000000001b027298" title="小红书" target="_blank" style="margin-inline:5px"><img class="nofancybox" src="../../../../img/xiaohongshu.png" style="width: 20px; height: 20px; margin-inline:5px; vertical-align: middle;"/></a><a class="info-icon" href="mailto:renzg2004@126.com" title="Email" target="_blank" style="margin-inline:5px"><img class="nofancybox" src="../../../../img/mail.png" style="width: 20px; height: 20px; margin-inline:5px; vertical-align: middle;"/></a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"> Categories</i></div></div><div class="widget"><div class="widget-title"><i class="fa fa-star-o"> Tags</i></div><div class="tagcloud"><a href="../../../../tags/Java/" style="font-size: 15px;">Java</a> <a href="../../../../tags/SDN/" style="font-size: 15px;">SDN</a> <a href="../../../../tags/OpenFlow/" style="font-size: 15px;">OpenFlow</a> <a href="../../../../tags/%E7%8E%B0%E4%BB%A3%E4%BA%A4%E6%8D%A2%E5%8E%9F%E7%90%86/" style="font-size: 15px;">现代交换原理</a> <a href="../../../../tags/SIP/" style="font-size: 15px;">SIP</a> <a href="../../../../tags/Spring-Boot/" style="font-size: 15px;">Spring Boot</a> <a href="../../../../tags/vue/" style="font-size: 15px;">vue</a> <a href="../../../../tags/MyBatis/" style="font-size: 15px;">MyBatis</a> <a href="../../../../tags/html/" style="font-size: 15px;">html</a> <a href="../../../../tags/css/" style="font-size: 15px;">css</a> <a href="../../../../tags/javascript/" style="font-size: 15px;">javascript</a> <a href="../../../../tags/axios/" style="font-size: 15px;">axios</a> <a href="../../../../tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" style="font-size: 15px;">操作系统</a> <a href="../../../../tags/Redis/" style="font-size: 15px;">Redis</a> <a href="../../../../tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E7%BB%93%E6%9E%84/" style="font-size: 15px;">计算机系统结构</a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-file-o"> Recent</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="../../../07/15/%E8%8B%8D%E7%A9%B9%E5%A4%96%E5%8D%96%E7%AC%94%E8%AE%B0/">苍穹外卖笔记</a></li><li class="post-list-item"><a class="post-list-link" href="../../../07/01/Java-%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/">Java-基础语法</a></li><li class="post-list-item"><a class="post-list-link" href="../../../06/21/SIP%E5%8D%8F%E8%AE%AE%E5%AE%9E%E9%AA%8C/">SIP协议实验</a></li><li class="post-list-item"><a class="post-list-link" href="../../../06/21/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E7%BB%93%E6%9E%84%E7%AC%94%E8%AE%B0/">计算机系统结构笔记</a></li><li class="post-list-item"><a class="post-list-link" href="../../../06/10/Spring-%E5%85%A8%E6%A0%88%E5%BC%80%E5%8F%91%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">Spring-全栈开发学习笔记</a></li><li class="post-list-item"><a class="post-list-link" href="">SDN基本原理与OpenFlow协议分析</a></li><li class="post-list-item"><a class="post-list-link" href="../../../03/18/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E8%AF%BE%E7%A8%8B%E8%AE%BE%E8%AE%A1/">操作系统课程设计</a></li><li class="post-list-item"><a class="post-list-link" href="../../../03/01/%E5%89%8D%E7%AB%AF%E7%AC%94%E8%AE%B0/">前端笔记</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-external-link"> Links</i></div><ul></ul><a href="https://github.com/trenchance2022" title="友链招募中" target="_blank">友链招募中</a></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2025 <a href="../../../../." rel="nofollow">Trenchance's Home.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/tufu9441/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/pagecho"> Cho.</a></div></div></div><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="../../../../js/totop.js?v=1.0.0" async></script><script type="text/javascript" src="https://unpkg.com/@fancyapps/fancybox/dist/jquery.fancybox.min.js" async></script><script type="text/javascript" src="../../../../js/fancybox.js?v=1.0.0" async></script><link rel="stylesheet" type="text/css" href="https://unpkg.com/@fancyapps/fancybox/dist/jquery.fancybox.min.css"><script type="text/javascript" src="../../../../js/copycode.js?v=1.0.0" successtext="Copy Successed!"></script><link rel="stylesheet" type="text/css" href="../../../../css/copycode.css?v=1.0.0"><script type="text/javascript" src="../../../../js/codeblock-resizer.js?v=1.0.0"></script><script type="text/javascript" src="../../../../js/smartresize.js?v=1.0.0"></script></div></body></html>
+</div><div class="tags"><ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../../../tags/OpenFlow/" rel="tag">OpenFlow</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../../../tags/SDN/" rel="tag">SDN</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../../../tags/%E7%8E%B0%E4%BB%A3%E4%BA%A4%E6%8D%A2%E5%8E%9F%E7%90%86/" rel="tag">现代交换原理</a></li></ul></div><div class="post-nav"><a class="pre" href="../../../06/10/Spring-%E5%85%A8%E6%A0%88%E5%BC%80%E5%8F%91%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">Spring-全栈开发学习笔记</a><a class="next" href="../../../03/18/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E8%AF%BE%E7%A8%8B%E8%AE%BE%E8%AE%A1/">操作系统课程设计</a></div></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar"><div class="widget"><form class="search-form" action="//www.google.com/search" method="get" accept-charset="utf-8" target="_blank"><input type="text" name="q" maxlength="20" placeholder="Search"/><input type="hidden" name="sitesearch" value="https://trenchance2022.github.io"/></form></div><div class="widget"><div class="author-info"><a class="info-avatar" href="/about/" title="About"><img class="nofancybox" src="/img/trenchance.jpg"/></a><p>Give it your best shot.</p><a class="info-icon" href="https://github.com/trenchance2022" title="Github" target="_blank" style="margin-inline:5px"><img class="nofancybox" src="../../../../img/github.png" style="width: 20px; height: 20px; margin-inline:5px; vertical-align: middle;"/></a><a class="info-icon" href="https://b23.tv/CPgDyCs" title="Bilibili" target="_blank" style="margin-inline:5px"><img class="nofancybox" src="../../../../img/bilibili.png" style="width: 20px; height: 20px; margin-inline:5px; vertical-align: middle;"/></a><a class="info-icon" href="https://www.xiaohongshu.com/user/profile/62bece15000000001b027298" title="小红书" target="_blank" style="margin-inline:5px"><img class="nofancybox" src="../../../../img/xiaohongshu.png" style="width: 20px; height: 20px; margin-inline:5px; vertical-align: middle;"/></a><a class="info-icon" href="mailto:renzg2004@126.com" title="Email" target="_blank" style="margin-inline:5px"><img class="nofancybox" src="../../../../img/mail.png" style="width: 20px; height: 20px; margin-inline:5px; vertical-align: middle;"/></a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"> Categories</i></div></div><div class="widget"><div class="widget-title"><i class="fa fa-star-o"> Tags</i></div><div class="tagcloud"><a href="../../../../tags/Java/" style="font-size: 15px;">Java</a> <a href="../../../../tags/SDN/" style="font-size: 15px;">SDN</a> <a href="../../../../tags/OpenFlow/" style="font-size: 15px;">OpenFlow</a> <a href="../../../../tags/%E7%8E%B0%E4%BB%A3%E4%BA%A4%E6%8D%A2%E5%8E%9F%E7%90%86/" style="font-size: 15px;">现代交换原理</a> <a href="../../../../tags/Spring-Boot/" style="font-size: 15px;">Spring Boot</a> <a href="../../../../tags/vue/" style="font-size: 15px;">vue</a> <a href="../../../../tags/MyBatis/" style="font-size: 15px;">MyBatis</a> <a href="../../../../tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" style="font-size: 15px;">操作系统</a> <a href="../../../../tags/SIP/" style="font-size: 15px;">SIP</a> <a href="../../../../tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E7%BB%93%E6%9E%84/" style="font-size: 15px;">计算机系统结构</a> <a href="../../../../tags/html/" style="font-size: 15px;">html</a> <a href="../../../../tags/css/" style="font-size: 15px;">css</a> <a href="../../../../tags/javascript/" style="font-size: 15px;">javascript</a> <a href="../../../../tags/axios/" style="font-size: 15px;">axios</a> <a href="../../../../tags/Redis/" style="font-size: 15px;">Redis</a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-file-o"> Recent</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="../../../07/15/%E8%8B%8D%E7%A9%B9%E5%A4%96%E5%8D%96%E7%AC%94%E8%AE%B0/">苍穹外卖笔记</a></li><li class="post-list-item"><a class="post-list-link" href="../../../07/01/Java-%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/">Java-基础语法</a></li><li class="post-list-item"><a class="post-list-link" href="../../../06/21/SIP%E5%8D%8F%E8%AE%AE%E5%AE%9E%E9%AA%8C/">SIP协议实验</a></li><li class="post-list-item"><a class="post-list-link" href="../../../06/21/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E7%BB%93%E6%9E%84%E7%AC%94%E8%AE%B0/">计算机系统结构笔记</a></li><li class="post-list-item"><a class="post-list-link" href="../../../06/10/Spring-%E5%85%A8%E6%A0%88%E5%BC%80%E5%8F%91%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">Spring-全栈开发学习笔记</a></li><li class="post-list-item"><a class="post-list-link" href="">SDN基本原理与OpenFlow协议分析</a></li><li class="post-list-item"><a class="post-list-link" href="../../../03/18/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E8%AF%BE%E7%A8%8B%E8%AE%BE%E8%AE%A1/">操作系统课程设计</a></li><li class="post-list-item"><a class="post-list-link" href="../../../03/01/%E5%89%8D%E7%AB%AF%E7%AC%94%E8%AE%B0/">前端笔记</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-external-link"> Links</i></div><ul></ul><a href="https://github.com/trenchance2022" title="友链招募中" target="_blank">友链招募中</a></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2025 <a href="../../../../." rel="nofollow">Trenchance's Home.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/tufu9441/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/pagecho"> Cho.</a></div></div></div><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="../../../../js/totop.js?v=1.0.0" async></script><script type="text/javascript" src="https://unpkg.com/@fancyapps/fancybox/dist/jquery.fancybox.min.js" async></script><script type="text/javascript" src="../../../../js/fancybox.js?v=1.0.0" async></script><link rel="stylesheet" type="text/css" href="https://unpkg.com/@fancyapps/fancybox/dist/jquery.fancybox.min.css"><script type="text/javascript" src="../../../../js/copycode.js?v=1.0.0" successtext="Copy Successed!"></script><link rel="stylesheet" type="text/css" href="../../../../css/copycode.css?v=1.0.0"><script type="text/javascript" src="../../../../js/codeblock-resizer.js?v=1.0.0"></script><script type="text/javascript" src="../../../../js/smartresize.js?v=1.0.0"></script></div></body></html>
