@@ -1,0 +1,533 @@
+<!DOCTYPE html><html lang="en"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content=""><title>SIP协议实验 | Trenchance's Home</title><link rel="stylesheet" type="text/css" href="../../../../css/style.css?v=1.0.0"><link rel="stylesheet" type="text/css" href="https://unpkg.com/normalize.css"><link rel="stylesheet" type="text/css" href="https://unpkg.com/purecss/build/pure-min.css"><link rel="stylesheet" type="text/css" href="https://unpkg.com/purecss/build/grids-responsive-min.css"><link rel="stylesheet" href="https://unpkg.com/font-awesome@4.7.0/css/font-awesome.min.css"><script type="text/javascript" src="https://unpkg.com/jquery/dist/jquery.min.js"></script><link rel="icon" mask="" sizes="any" href="../../../../favicon.ico"><link rel="Shortcut Icon" type="image/x-icon" href="../../../../favicon.ico"><link rel="apple-touch-icon" href="../../../../apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="../../../../apple-touch-icon.png"><script type="text/javascript" src="https://unpkg.com/clipboard/dist/clipboard.min.js"></script><script type="text/javascript" src="https://unpkg.com/toastr/build/toastr.min.js"></script><link rel="stylesheet" href="https://unpkg.com/toastr/build/toastr.min.css"><meta name="generator" content="Hexo 7.3.0"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">SIP协议实验</h1><a id="logo" href="../../../../.">Trenchance's Home</a><p class="description"></p></div><div id="nav-menu"><a class="current" href="../../../../."><i class="fa fa-home"> Home</i></a><a href="../../../../archives/"><i class="fa fa-archive"> Archive</i></a><a href="../../../../about/"><i class="fa fa-user"> About</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">SIP协议实验</h1><div class="post-meta">2025-06-21</div><div class="post-content"><h1 id="SIP-拨打电话实验"><a href="#SIP-拨打电话实验" class="headerlink" title="SIP 拨打电话实验"></a>SIP 拨打电话实验</h1><h2 id="需要工具"><a href="#需要工具" class="headerlink" title="需要工具"></a>需要工具</h2><p> PC机两台  Wireshark 软件  MicroSIP 软件</p>
+<h2 id="实验步骤"><a href="#实验步骤" class="headerlink" title="实验步骤"></a>实验步骤</h2><h3 id="安装下载Wireshark软件、MicroSIP软件"><a href="#安装下载Wireshark软件、MicroSIP软件" class="headerlink" title="安装下载Wireshark软件、MicroSIP软件"></a>安装下载Wireshark软件、MicroSIP软件</h3><h3 id="使用wireshark对SIP数据流进行分析"><a href="#使用wireshark对SIP数据流进行分析" class="headerlink" title="使用wireshark对SIP数据流进行分析"></a>使用wireshark对SIP数据流进行分析</h3><h4 id="注册流程"><a href="#注册流程" class="headerlink" title="注册流程"></a>注册流程</h4><p>![](屏幕截图 2025-04-13 085441.png)</p>
+<p>![](屏幕截图 2025-04-13 085505.png)</p>
+<p>a. 终端代理向代理服务器发送注册请求（REGISTER）；</p>
+<p>b. 代理服务器回送 401 Unauthorized，要求进行安全认证；</p>
+<p>c. 终端代理向代理服务器发送加入安全认证信息的注册请求（REGISTER）；</p>
+<p>d. 代理服务器回送 200 OK，表示请求成功，即注册成功。</p>
+<h4 id="注销流程"><a href="#注销流程" class="headerlink" title="注销流程"></a>注销流程</h4><p>![](屏幕截图 2025-04-13 085211.png)</p>
+<p>![](屏幕截图 2025-04-13 085244.png)</p>
+<p>a. 终端代理向代理服务器发送注销请求（REGISTER）；</p>
+<p>b. 代理服务器回送 401 Unauthorized，要求进行安全认证；</p>
+<p>c. 终端代理向代理服务器发送加入安全认证信息的注销请求（REGISTER）；</p>
+<p>d. 代理服务器回送 200 OK，表示请求成功，即注销成功。</p>
+<h4 id="基本呼叫建立流程"><a href="#基本呼叫建立流程" class="headerlink" title="基本呼叫建立流程"></a>基本呼叫建立流程</h4><p>终端A（主叫）：10.129.147.228</p>
+<p>注册服务器：212.79.111.155</p>
+<p>终端B（被叫）：10.29.157.115</p>
+<p>![](屏幕截图 2025-04-14 092257.png)</p>
+<p>![](屏幕截图 2025-04-14 092323.png)</p>
+<p>主叫侧：</p>
+<table>
+<thead>
+<tr>
+<th>No.</th>
+<th>协议内容</th>
+<th>分析</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>6</td>
+<td>INVITE</td>
+<td>主叫请求呼叫 <a href="mailto:&#x65;&#x74;&#x6f;&#x6e;&#x61;&#x6e;&#64;&#105;&#x70;&#116;&#101;&#x6c;&#x2e;&#x6f;&#x72;&#103;">&#x65;&#x74;&#x6f;&#x6e;&#x61;&#x6e;&#64;&#105;&#x70;&#116;&#101;&#x6c;&#x2e;&#x6f;&#x72;&#103;</a></td>
+</tr>
+<tr>
+<td>7</td>
+<td>100 Trying</td>
+<td>服务器接收请求，正在查找被叫</td>
+</tr>
+<tr>
+<td>8</td>
+<td>407 Proxy Authentication Required</td>
+<td>要求身份验证</td>
+</tr>
+<tr>
+<td>9</td>
+<td>ACK</td>
+<td>主叫确认收到 407</td>
+</tr>
+<tr>
+<td>10</td>
+<td>INVITE（重新发起）</td>
+<td>带认证信息的第二次 INVITE</td>
+</tr>
+<tr>
+<td>11</td>
+<td>100 Trying</td>
+<td>再次尝试建立连接</td>
+</tr>
+<tr>
+<td>13</td>
+<td>180 Ringing</td>
+<td>被叫响铃</td>
+</tr>
+<tr>
+<td>24</td>
+<td>200 OK (INVITE)</td>
+<td>被叫接听了电话</td>
+</tr>
+<tr>
+<td>28</td>
+<td>ACK</td>
+<td>主叫确认，通话建立完成</td>
+</tr>
+</tbody></table>
+<p>被叫侧：</p>
+<table>
+<thead>
+<tr>
+<th>No.</th>
+<th>协议内容</th>
+<th>分析</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>3199</td>
+<td>INVITE</td>
+<td>来自主叫的通话请求</td>
+</tr>
+<tr>
+<td>3205</td>
+<td>100 Trying</td>
+<td>被叫回应“正在尝试处理”</td>
+</tr>
+<tr>
+<td>3206</td>
+<td>180 Ringing</td>
+<td>被叫响铃中，等待用户操作</td>
+</tr>
+<tr>
+<td>3582</td>
+<td>200 OK (INVITE)</td>
+<td>用户点击“接听”</td>
+</tr>
+<tr>
+<td>3671</td>
+<td>200 OK (INVITE)</td>
+<td>继续确认（重发）</td>
+</tr>
+<tr>
+<td>3689</td>
+<td>ACK</td>
+<td>来自主叫的确认</td>
+</tr>
+<tr>
+<td>3741</td>
+<td>ACK</td>
+<td>再次确认（重传）</td>
+</tr>
+<tr>
+<td>5136</td>
+<td>200 OK</td>
+<td>对方确认挂断成功</td>
+</tr>
+</tbody></table>
+<p>符合下面的流程：</p>
+<p>a. 终端代理 A 向代理服务器发送呼叫建立请求（INVITE）；</p>
+<p>b. 代理服务器回送 100 Trying，表示正在尝试建立呼叫连接；</p>
+<p>c. 代理服务器向终端代理 A 发送 407 Proxy Authentication Required，要求进行终端代理安全认证；</p>
+<p>d. 终端代理 A 回送 ACK 表示确认；</p>
+<p>e. 终端代理 A 向代理服务器发送加入终端代理安全认证信息的呼叫建立请求（INVITE）；</p>
+<p>f. 代理服务器向终端代理 B 发送呼叫建立请求（INVITE）；</p>
+<p>g. 代理服务器向终端代理 A 发送 100 Trying，表示正在尝试建立呼叫连接；</p>
+<p>h. 终端代理 B 向代理服务器发送 100 Trying，表示正在尝试建立呼叫连接；</p>
+<p>i. 终端代理 B 向代理服务器发送 180 Ringing，送回铃声；</p>
+<p>j. 代理服务器向终端代理 A 发送 180 Ringing，送回铃声；</p>
+<p>k. 终端代理 B 向代理服务器发送 200 OK，表示请求成功；</p>
+<p>l. 代理服务器向终端代理 A 发送 200 OK，表示请求成功；</p>
+<p>m. 终端代理 A 向代理服务器回送 ACK 表示确认；</p>
+<p>n. 代理服务器向终端代理 B 回送 ACK 表示确认；</p>
+<p>o. 终端代理 A 和终端代理 B 通过 RTP 流进行通话。</p>
+<h2 id="实验任务"><a href="#实验任务" class="headerlink" title="实验任务"></a>实验任务</h2><h3 id="正常呼叫释放过程"><a href="#正常呼叫释放过程" class="headerlink" title="正常呼叫释放过程"></a>正常呼叫释放过程</h3><p>![](屏幕截图 2025-04-14 093851.png)</p>
+<p>![](屏幕截图 2025-04-14 093905.png)</p>
+<p>主叫侧：</p>
+<table>
+<thead>
+<tr>
+<th>No.</th>
+<th>协议内容</th>
+<th>分析</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>24</td>
+<td>200 OK (INVITE)</td>
+<td>被叫接听通话，请求建立成功</td>
+</tr>
+<tr>
+<td>28</td>
+<td>ACK</td>
+<td>主叫确认接听，正式建立通话</td>
+</tr>
+<tr>
+<td>605</td>
+<td>BYE</td>
+<td>主叫发起挂断通话请求</td>
+</tr>
+<tr>
+<td>631</td>
+<td>BYE（重传）</td>
+<td>主叫再次发送挂断请求（UDP无确认机制）</td>
+</tr>
+<tr>
+<td>639</td>
+<td>200 OK (BYE)</td>
+<td>被叫确认接收到挂断请求，释放会话</td>
+</tr>
+<tr>
+<td>642</td>
+<td>200 OK (BYE)（重传）</td>
+<td>被叫重传 OK 作为应答确认</td>
+</tr>
+</tbody></table>
+<p>被叫侧：</p>
+<table>
+<thead>
+<tr>
+<th>No.</th>
+<th>协议内容</th>
+<th>分析</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>3689</td>
+<td>ACK</td>
+<td>主叫确认建立通话（对应 200 OK）</td>
+</tr>
+<tr>
+<td>3741</td>
+<td>ACK（重传）</td>
+<td>重传 ACK，确保建立通话</td>
+</tr>
+<tr>
+<td>5135</td>
+<td>BYE</td>
+<td>被叫主动挂断通话</td>
+</tr>
+<tr>
+<td>5136</td>
+<td>200 OK (BYE)</td>
+<td>主叫确认挂断，释放完成</td>
+</tr>
+</tbody></table>
+<p><img src="image-20250414095237904.png"></p>
+<h3 id="被叫忙呼叫释放"><a href="#被叫忙呼叫释放" class="headerlink" title="被叫忙呼叫释放"></a>被叫忙呼叫释放</h3><p>![](屏幕截图 2025-04-14 095740.png)</p>
+<p>![](屏幕截图 2025-04-14 095751.png)</p>
+<p>主叫侧：</p>
+<table>
+<thead>
+<tr>
+<th>No.</th>
+<th>协议内容</th>
+<th>分析</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>144</td>
+<td>INVITE</td>
+<td>主叫发起呼叫 <a href="mailto:&#101;&#116;&#x6f;&#110;&#x61;&#x6e;&#64;&#x69;&#x70;&#116;&#101;&#x6c;&#46;&#x6f;&#114;&#x67;">&#101;&#116;&#x6f;&#110;&#x61;&#x6e;&#64;&#x69;&#x70;&#116;&#101;&#x6c;&#46;&#x6f;&#114;&#x67;</a></td>
+</tr>
+<tr>
+<td>145</td>
+<td>100 Trying</td>
+<td>服务器正在尝试建立连接</td>
+</tr>
+<tr>
+<td>146</td>
+<td>407 Proxy Authentication Required</td>
+<td>要求身份验证</td>
+</tr>
+<tr>
+<td>147</td>
+<td>ACK</td>
+<td>主叫确认收到 407</td>
+</tr>
+<tr>
+<td>148</td>
+<td>INVITE（带认证）</td>
+<td>主叫带认证信息再次呼叫</td>
+</tr>
+<tr>
+<td>153</td>
+<td>100 Trying</td>
+<td>服务器继续尝试建立连接</td>
+</tr>
+<tr>
+<td>154</td>
+<td>486 Active calls limit</td>
+<td>被叫当前正忙或已达到呼叫限制，拒绝呼叫</td>
+</tr>
+<tr>
+<td>155</td>
+<td>ACK</td>
+<td>主叫确认收到拒绝响应，释放呼叫流程</td>
+</tr>
+</tbody></table>
+<p>被叫侧：</p>
+<table>
+<thead>
+<tr>
+<th>No.</th>
+<th>协议内容</th>
+<th>分析</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>491</td>
+<td>INVITE</td>
+<td>主叫向被叫发起呼叫请求</td>
+</tr>
+<tr>
+<td>494</td>
+<td>100 Trying</td>
+<td>被叫尝试处理请求</td>
+</tr>
+<tr>
+<td>495</td>
+<td>486 Active calls limit</td>
+<td>被叫返回忙响应，拒绝呼叫</td>
+</tr>
+<tr>
+<td>526</td>
+<td>ACK</td>
+<td>主叫确认收到 486，释放流程</td>
+</tr>
+<tr>
+<td>1386</td>
+<td>BYE</td>
+<td>被叫<strong>当前通话</strong>主动挂断</td>
+</tr>
+<tr>
+<td>……</td>
+<td>……</td>
+<td>……</td>
+</tr>
+</tbody></table>
+<p><img src="image-20250414100744143.png"></p>
+<h3 id="被叫无应答（主叫挂机）"><a href="#被叫无应答（主叫挂机）" class="headerlink" title="被叫无应答（主叫挂机）"></a>被叫无应答（主叫挂机）</h3><p>![](屏幕截图 2025-04-14 101045.png)</p>
+<p>![](屏幕截图 2025-04-14 101054.png)</p>
+<p>主叫侧：</p>
+<table>
+<thead>
+<tr>
+<th>No.</th>
+<th>协议内容</th>
+<th>分析</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>120</td>
+<td>INVITE</td>
+<td>主叫发起呼叫 <a href="mailto:&#x65;&#x74;&#111;&#110;&#x61;&#x6e;&#64;&#x69;&#112;&#x74;&#101;&#108;&#x2e;&#x6f;&#114;&#103;">&#x65;&#x74;&#111;&#110;&#x61;&#x6e;&#64;&#x69;&#112;&#x74;&#101;&#108;&#x2e;&#x6f;&#114;&#103;</a></td>
+</tr>
+<tr>
+<td>125</td>
+<td>100 Trying</td>
+<td>服务器处理中</td>
+</tr>
+<tr>
+<td>126</td>
+<td>407 Proxy Authentication Required</td>
+<td>需要身份验证</td>
+</tr>
+<tr>
+<td>127</td>
+<td>ACK</td>
+<td>主叫确认 407 响应</td>
+</tr>
+<tr>
+<td>128</td>
+<td>INVITE（带认证）</td>
+<td>主叫再次发起呼叫</td>
+</tr>
+<tr>
+<td>130</td>
+<td>100 Trying</td>
+<td>服务器继续处理中</td>
+</tr>
+<tr>
+<td>131</td>
+<td>180 Ringing</td>
+<td>被叫响铃，等待接听</td>
+</tr>
+<tr>
+<td>159</td>
+<td>CANCEL</td>
+<td>主叫因无人应答主动挂断</td>
+</tr>
+<tr>
+<td>164</td>
+<td>200 OK (CANCEL)</td>
+<td>服务器确认取消请求成功</td>
+</tr>
+<tr>
+<td>165</td>
+<td>487 Request Terminated</td>
+<td>服务器终止先前的 INVITE</td>
+</tr>
+<tr>
+<td>166</td>
+<td>ACK</td>
+<td>主叫确认终止状态码，流程结束</td>
+</tr>
+</tbody></table>
+<p>被叫侧：</p>
+<table>
+<thead>
+<tr>
+<th>No.</th>
+<th>协议内容</th>
+<th>分析</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>40</td>
+<td>INVITE</td>
+<td>主叫向被叫发起通话请求</td>
+</tr>
+<tr>
+<td>41</td>
+<td>100 Trying</td>
+<td>被叫尝试处理请求</td>
+</tr>
+<tr>
+<td>42</td>
+<td>180 Ringing</td>
+<td>被叫响铃状态</td>
+</tr>
+<tr>
+<td>51</td>
+<td>CANCEL</td>
+<td>主叫取消通话</td>
+</tr>
+<tr>
+<td>52</td>
+<td>200 OK (CANCEL)</td>
+<td>被叫确认收到取消请求</td>
+</tr>
+<tr>
+<td>53</td>
+<td>487 Request Terminated</td>
+<td>被叫终止 INVITE 事务</td>
+</tr>
+<tr>
+<td>54</td>
+<td>ACK</td>
+<td>主叫确认 487 响应，流程释放完成</td>
+</tr>
+</tbody></table>
+<p><img src="image-20250414101957795.png"></p>
+<h3 id="被叫无应答（长时间被叫无应答）"><a href="#被叫无应答（长时间被叫无应答）" class="headerlink" title="被叫无应答（长时间被叫无应答）"></a>被叫无应答（长时间被叫无应答）</h3><p>注：Register相关报文是Register Refresh，忽略即可。</p>
+<p>![](屏幕截图 2025-04-14 102210.png)</p>
+<p>![](屏幕截图 2025-04-14 102226.png)</p>
+<p>主叫侧：</p>
+<table>
+<thead>
+<tr>
+<th>No.</th>
+<th>协议内容</th>
+<th>分析</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>10</td>
+<td>INVITE</td>
+<td>主叫向注册服务器发起通话请求</td>
+</tr>
+<tr>
+<td>11</td>
+<td>100 Trying</td>
+<td>注册服务器确认收到请求，正在处理</td>
+</tr>
+<tr>
+<td>12</td>
+<td>407 Proxy Authentication Required</td>
+<td>要求主叫进行身份认证</td>
+</tr>
+<tr>
+<td>13</td>
+<td>ACK</td>
+<td>主叫确认 407 响应</td>
+</tr>
+<tr>
+<td>14</td>
+<td>INVITE（带认证）</td>
+<td>主叫重新发起认证后的请求</td>
+</tr>
+<tr>
+<td>16</td>
+<td>100 Trying</td>
+<td>注册服务器再次处理中</td>
+</tr>
+<tr>
+<td>18</td>
+<td>180 Ringing</td>
+<td>注册服务器通知主叫：被叫响铃中</td>
+</tr>
+<tr>
+<td>5203</td>
+<td>408 Request Timeout</td>
+<td>注册服务器通知主叫：被叫长时间无应答，呼叫超时失败</td>
+</tr>
+<tr>
+<td>5204</td>
+<td>ACK</td>
+<td>主叫确认收到 408 响应，呼叫流程结束</td>
+</tr>
+</tbody></table>
+<p>被叫侧：</p>
+<table>
+<thead>
+<tr>
+<th>No.</th>
+<th>协议内容</th>
+<th>分析</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>18</td>
+<td>INVITE</td>
+<td>注册服务器将主叫的请求转发给被叫</td>
+</tr>
+<tr>
+<td>19</td>
+<td>100 Trying</td>
+<td>被叫收到 INVITE，请求处理中</td>
+</tr>
+<tr>
+<td>20</td>
+<td>180 Ringing</td>
+<td>被叫设备开始响铃</td>
+</tr>
+<tr>
+<td>161</td>
+<td>180 Ringing（重传）</td>
+<td>被叫未操作，继续发送响铃状态</td>
+</tr>
+<tr>
+<td>4666</td>
+<td>180 Ringing（重传）</td>
+<td>被叫未操作，继续发送响铃状态</td>
+</tr>
+<tr>
+<td>4668</td>
+<td>CANCEL</td>
+<td>取消通话</td>
+</tr>
+<tr>
+<td>4669</td>
+<td>200 OK (CANCEL)</td>
+<td>被叫确认收到取消请求</td>
+</tr>
+<tr>
+<td>4670</td>
+<td>487 Request Terminated</td>
+<td>被叫终止 INVITE 事务</td>
+</tr>
+<tr>
+<td>4672</td>
+<td>ACK</td>
+<td>服务器向用户B发送ACK确认</td>
+</tr>
+</tbody></table>
+<p><img src="image-20250414105228454.png"></p>
+</div><div class="tags"><ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../../../tags/SIP/" rel="tag">SIP</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../../../tags/%E7%8E%B0%E4%BB%A3%E4%BA%A4%E6%8D%A2%E5%8E%9F%E7%90%86/" rel="tag">现代交换原理</a></li></ul></div><div class="post-nav"><a class="pre" href="../../../07/01/Java-%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/">Java-基础语法</a><a class="next" href="../%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E7%BB%93%E6%9E%84%E7%AC%94%E8%AE%B0/">计算机系统结构笔记</a></div></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar"><div class="widget"><form class="search-form" action="//www.google.com/search" method="get" accept-charset="utf-8" target="_blank"><input type="text" name="q" maxlength="20" placeholder="Search"/><input type="hidden" name="sitesearch" value="https://trenchance2022.github.io"/></form></div><div class="widget"><div class="author-info"><a class="info-avatar" href="/about/" title="About"><img class="nofancybox" src="/img/trenchance.jpg"/></a><p>Give it your best shot.</p><a class="info-icon" href="https://github.com/trenchance2022" title="Github" target="_blank" style="margin-inline:5px"><img class="nofancybox" src="../../../../img/github.png" style="width: 20px; height: 20px; margin-inline:5px; vertical-align: middle;"/></a><a class="info-icon" href="https://b23.tv/CPgDyCs" title="Bilibili" target="_blank" style="margin-inline:5px"><img class="nofancybox" src="../../../../img/bilibili.png" style="width: 20px; height: 20px; margin-inline:5px; vertical-align: middle;"/></a><a class="info-icon" href="https://www.xiaohongshu.com/user/profile/62bece15000000001b027298" title="小红书" target="_blank" style="margin-inline:5px"><img class="nofancybox" src="../../../../img/xiaohongshu.png" style="width: 20px; height: 20px; margin-inline:5px; vertical-align: middle;"/></a><a class="info-icon" href="mailto:renzg2004@126.com" title="Email" target="_blank" style="margin-inline:5px"><img class="nofancybox" src="../../../../img/mail.png" style="width: 20px; height: 20px; margin-inline:5px; vertical-align: middle;"/></a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"> Categories</i></div></div><div class="widget"><div class="widget-title"><i class="fa fa-star-o"> Tags</i></div><div class="tagcloud"><a href="../../../../tags/Java/" style="font-size: 15px;">Java</a> <a href="../../../../tags/Spring-Boot/" style="font-size: 15px;">Spring Boot</a> <a href="../../../../tags/vue/" style="font-size: 15px;">vue</a> <a href="../../../../tags/MyBatis/" style="font-size: 15px;">MyBatis</a> <a href="../../../../tags/html/" style="font-size: 15px;">html</a> <a href="../../../../tags/css/" style="font-size: 15px;">css</a> <a href="../../../../tags/javascript/" style="font-size: 15px;">javascript</a> <a href="../../../../tags/axios/" style="font-size: 15px;">axios</a> <a href="../../../../tags/Redis/" style="font-size: 15px;">Redis</a> <a href="../../../../tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E7%BB%93%E6%9E%84/" style="font-size: 15px;">计算机系统结构</a> <a href="../../../../tags/SDN/" style="font-size: 15px;">SDN</a> <a href="../../../../tags/OpenFlow/" style="font-size: 15px;">OpenFlow</a> <a href="../../../../tags/%E7%8E%B0%E4%BB%A3%E4%BA%A4%E6%8D%A2%E5%8E%9F%E7%90%86/" style="font-size: 15px;">现代交换原理</a> <a href="../../../../tags/SIP/" style="font-size: 15px;">SIP</a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-file-o"> Recent</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="../../../07/15/%E8%8B%8D%E7%A9%B9%E5%A4%96%E5%8D%96%E7%AC%94%E8%AE%B0/">苍穹外卖笔记</a></li><li class="post-list-item"><a class="post-list-link" href="../../../07/01/Java-%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/">Java-基础语法</a></li><li class="post-list-item"><a class="post-list-link" href="">SIP协议实验</a></li><li class="post-list-item"><a class="post-list-link" href="../%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E7%BB%93%E6%9E%84%E7%AC%94%E8%AE%B0/">计算机系统结构笔记</a></li><li class="post-list-item"><a class="post-list-link" href="../../10/Spring-%E5%85%A8%E6%A0%88%E5%BC%80%E5%8F%91%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">Spring-全栈开发学习笔记</a></li><li class="post-list-item"><a class="post-list-link" href="../../../05/17/SDN%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86%E4%B8%8EOpenFlow%E5%8D%8F%E8%AE%AE%E5%88%86%E6%9E%90/">SDN基本原理与OpenFlow协议分析</a></li><li class="post-list-item"><a class="post-list-link" href="../../../03/01/%E5%89%8D%E7%AB%AF%E7%AC%94%E8%AE%B0/">前端笔记</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-external-link"> Links</i></div><ul></ul><a href="https://github.com/trenchance2022" title="友链招募中" target="_blank">友链招募中</a></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2025 <a href="../../../../." rel="nofollow">Trenchance's Home.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/tufu9441/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/pagecho"> Cho.</a></div></div></div><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="../../../../js/totop.js?v=1.0.0" async></script><script type="text/javascript" src="https://unpkg.com/@fancyapps/fancybox/dist/jquery.fancybox.min.js" async></script><script type="text/javascript" src="../../../../js/fancybox.js?v=1.0.0" async></script><link rel="stylesheet" type="text/css" href="https://unpkg.com/@fancyapps/fancybox/dist/jquery.fancybox.min.css"><script type="text/javascript" src="../../../../js/copycode.js?v=1.0.0" successtext="Copy Successed!"></script><link rel="stylesheet" type="text/css" href="../../../../css/copycode.css?v=1.0.0"><script type="text/javascript" src="../../../../js/codeblock-resizer.js?v=1.0.0"></script><script type="text/javascript" src="../../../../js/smartresize.js?v=1.0.0"></script></div></body></html>
