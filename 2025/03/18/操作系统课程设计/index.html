@@ -450,7 +450,7 @@
 <h4 id="5-3-5-磁盘状态区"><a href="#5-3-5-磁盘状态区" class="headerlink" title="5.3.5 磁盘状态区"></a>5.3.5 磁盘状态区</h4><p>采用小格矩阵表示磁盘块使用情况。设计为16列×64行的网格，总计1024格对应磁盘的1024个块。每个小格代表一个磁盘块，使用颜色区分空闲和已占用状态（白色为空闲，深色为占用）。当有文件创建、扩展或删除时，此区域将有若干格子颜色发生变化，反映磁盘位图的改变情况。前端根据快照中<code>diskManagement</code>的occupiedBlocks列表，将对应索引的格子着色为占用，其余为空闲。直观上，用户可看到磁盘空间的分布碎片状况：如果连续创建大文件会有大片格子变色，删除文件会出现空洞。虽然无法精确显示文件内容，但此宏观视图有助于理解文件存储和磁盘分配机制。</p>
 <h4 id="5-3-6-设备列表区"><a href="#5-3-6-设备列表区" class="headerlink" title="5.3.6 设备列表区"></a>5.3.6 设备列表区</h4><p>显示当前系统中登记的所有模拟设备及其工作状态。界面用表格列出每个设备：包括设备标识符（如“Printer_1”等）、当前正在为哪个进程服务（若空闲则标记“空闲”），以及其等待队列中的进程PID列表。每当有进程请求某设备I&#x2F;O，该进程PID会出现在对应设备的等待队列栏，并在设备空闲时移至“运行进程”栏；I&#x2F;O完成后，该进程PID将从设备表中消失并重新出现在就绪队列（由进程区显示）。用户通过此表可以观察设备并行工作的情况和I&#x2F;O队列积压状况。例如，启动两个进程同时访问Printer_1，则设备列表会显示Printer_1的运行进程为其中一个，等待队列含另一个PID，当第一个完成后等待的进程转为运行。设备添加和移除操作（通过<code>addevc</code>&#x2F;<code>rmdevc</code>）会动态更新此表增删行。设备列表区提供了对系统外围设备活动的直观监控。</p>
 <h2 id="6-详细设计"><a href="#6-详细设计" class="headerlink" title="6 详细设计"></a>6 详细设计</h2><h3 id="6-1-系统初始化实现"><a href="#6-1-系统初始化实现" class="headerlink" title="6.1 系统初始化实现"></a>6.1 系统初始化实现</h3><p>本系统采用 Spring Boot 框架构建，在系统启动时，通过实现 <code>ApplicationRunner</code> 接口的 <code>StartupInitializer</code> 类自动完成系统的初始化操作，配合 <code>Library</code> 类完成模块的全局共享注册与配置。系统初始化的关键目标包括：注入核心模块、配置调度策略、创建 CPU 核心线程、注册模拟设备、构建测试用文件系统、并启动调度器。</p>
-<h4 id="6-1-1-类与方法"><a href="#6-1-1-类与方法" class="headerlink" title="6.1.1 类与方法"></a>6.1.1 类与方法</h4><p>![](屏幕截图 2025-05-06 092738.png)</p>
+<h4 id="6-1-1-类与方法"><a href="#6-1-1-类与方法" class="headerlink" title="6.1.1 类与方法"></a>6.1.1 类与方法</h4><p><img src="%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE2025-05-06092738.png"></p>
 <p><img src="image-20250506092749923.png"></p>
 <h4 id="6-1-2-流程图"><a href="#6-1-2-流程图" class="headerlink" title="6.1.2 流程图"></a>6.1.2 流程图</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">flowchart TD</span><br><span class="line">  Start([系统启动])</span><br><span class="line"></span><br><span class="line">  Start --&gt; A1[注入核心模块到 Spring 容器]</span><br><span class="line">  A1 --&gt; A2[注册核心模块到 Library]</span><br><span class="line">  A2 --&gt; B1[读取配置: CPU 数量 &amp; 调度策略]</span><br><span class="line">  B1 --&gt; B2[配置 Scheduler 策略]</span><br><span class="line">  B2 --&gt; C1[循环创建 CPU 实例]</span><br><span class="line">  C1 --&gt; C2[启动 CPU 线程]</span><br><span class="line">  C2 --&gt; D1[添加默认设备: Printer, Scanner, USB]</span><br><span class="line">  D1 --&gt; E1[创建根目录 d1]</span><br><span class="line">  E1 --&gt; E2[创建测试程序文件: t1-t16, m1, m2 ,e1-e3]</span><br><span class="line">  E2 --&gt; E3[写入模拟操作指令串]</span><br><span class="line">  E3 --&gt; F1[返回根目录]</span><br><span class="line">  F1 --&gt; G1[启动 Scheduler 主线程]</span><br><span class="line">  G1 --&gt; End([初始化完成, 系统运行中])</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
@@ -1273,11 +1273,11 @@
 <h3 id="8-4-集成测试"><a href="#8-4-集成测试" class="headerlink" title="8.4 集成测试"></a>8.4 集成测试</h3><h4 id="8-4-1-Shell-测试"><a href="#8-4-1-Shell-测试" class="headerlink" title="8.4.1 Shell 测试"></a>8.4.1 Shell 测试</h4><h5 id="8-4-1-1-错误命令"><a href="#8-4-1-1-错误命令" class="headerlink" title="8.4.1.1 错误命令"></a>8.4.1.1 错误命令</h5><p><img src="image-20250502104933111.png"></p>
 <p>能够提示报错，符合预期。</p>
 <h5 id="8-4-1-2-mkdir"><a href="#8-4-1-2-mkdir" class="headerlink" title="8.4.1.2 mkdir"></a>8.4.1.2 <code>mkdir</code></h5><p>创建目录前：</p>
-<p>![](屏幕截图 2025-05-02 103903.png)</p>
+<p><img src="%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE2025-05-02103903.png"></p>
 <p>输入指令创建目录：</p>
-<p>![](屏幕截图 2025-05-02 103913.png)</p>
+<p><img src="%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE2025-05-02103913.png"></p>
 <p>创建目录后：</p>
-<p>![](屏幕截图 2025-05-02 103920.png)</p>
+<p><img src="%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE2025-05-02103920.png"></p>
 <p>出现名为a的文件夹。</p>
 <p><img src="image-20250502104708651.png"></p>
 <p>重名目录会报错，符合预期。</p>
@@ -1300,44 +1300,44 @@
 <p><img src="image-20250502104638028.png"></p>
 <p>输入错误路径会报错，符合预期。</p>
 <h5 id="8-4-1-5-ls"><a href="#8-4-1-5-ls" class="headerlink" title="8.4.1.5 ls"></a>8.4.1.5 <code>ls</code></h5><p>在根目录执行：</p>
-<p>![](屏幕截图 2025-05-02 105145.png)</p>
+<p><img src="%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE2025-05-02105145.png"></p>
 <p>符合根目录下内容：</p>
-<p>![](屏幕截图 2025-05-02 105151.png)</p>
+<p><img src="%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE2025-05-02105151.png"></p>
 <h5 id="8-4-1-6-rm"><a href="#8-4-1-6-rm" class="headerlink" title="8.4.1.6 rm"></a>8.4.1.6 <code>rm</code></h5><p>删除b：</p>
-<p>![](屏幕截图 2025-05-02 105527.png)</p>
+<p><img src="%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE2025-05-02105527.png"></p>
 <p>相应的回收其空间，符合预期：</p>
-<p>![](屏幕截图 2025-05-02 105534.png)</p>
+<p><img src="%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE2025-05-02105534.png"></p>
 <p>这时如果再创建文件：</p>
-<p>![](屏幕截图 2025-05-02 105725.png)</p>
+<p><img src="%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE2025-05-02105725.png"></p>
 <p>文件系统会遍历位图找到合适空间分配：</p>
 <p><img src="image-20250502105842321.png"></p>
 <p>删除不存在的文件会报错，符合预期：</p>
 <p><img src="image-20250502105903999.png"></p>
 <h5 id="8-4-1-7-rmdir"><a href="#8-4-1-7-rmdir" class="headerlink" title="8.4.1.7 rmdir"></a>8.4.1.7 <code>rmdir</code></h5><p>删除空文件夹a：</p>
-<p>![](屏幕截图 2025-05-02 110250.png)</p>
+<p><img src="%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE2025-05-02110250.png"></p>
 <p>a被删除：</p>
 <p><img src="image-20250502110316091.png"></p>
 <h5 id="8-4-1-8-rmrdir"><a href="#8-4-1-8-rmrdir" class="headerlink" title="8.4.1.8 rmrdir"></a>8.4.1.8 <code>rmrdir</code></h5><p>递归删除文件夹d1：</p>
-<p>![](屏幕截图 2025-05-02 110427.png)</p>
+<p><img src="%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE2025-05-02110427.png"></p>
 <p>空间被回收：</p>
-<p>![](屏幕截图 2025-05-02 110433.png)</p>
+<p><img src="%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE2025-05-02110433.png"></p>
 <p>目录中全部内容被删除：</p>
-<p>![](屏幕截图 2025-05-02 110440.png)</p>
+<p><img src="%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE2025-05-02110440.png"></p>
 <h5 id="8-4-1-9-shf"><a href="#8-4-1-9-shf" class="headerlink" title="8.4.1.9 shf"></a>8.4.1.9 <code>shf</code></h5><p>创建一个40960字节的文件。</p>
-<p>![](屏幕截图 2025-05-02 110611.png)</p>
+<p><img src="%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE2025-05-02110611.png"></p>
 <p>创建前磁盘情况：</p>
-<p>![](屏幕截图 2025-05-02 110433-1746155241933-16.png)</p>
+<p><img src="%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE2025-05-02110433-1746155241933-16.png"></p>
 <p>创建后磁盘情况：</p>
 <p><img src="image-20250502110732317.png"></p>
 <p>符合上面shf的输出结果。</p>
 <h5 id="8-4-1-10-vi"><a href="#8-4-1-10-vi" class="headerlink" title="8.4.1.10 vi"></a>8.4.1.10 <code>vi</code></h5><p>输入vi指令：</p>
-<p>![](屏幕截图 2025-05-02 110952.png)</p>
+<p><img src="%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE2025-05-02110952.png"></p>
 <p>若文件不存在，系统会自动为我们新建：</p>
-<p>![](屏幕截图 2025-05-02 111001.png)</p>
+<p><img src="%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE2025-05-02111001.png"></p>
 <p>输入文件内容：</p>
-<p>![](屏幕截图 2025-05-02 111051.png)</p>
+<p><img src="%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE2025-05-02111051.png"></p>
 <p>查看文件内容与磁盘块占用，符合预期：</p>
-<p>![](屏幕截图 2025-05-02 111115.png)</p>
+<p><img src="%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE2025-05-02111115.png"></p>
 <h5 id="8-4-1-11-exec"><a href="#8-4-1-11-exec" class="headerlink" title="8.4.1.11 exec"></a>8.4.1.11 <code>exec</code></h5><p>创建一个文件，输入一段简易示例程序：</p>
 <p><img src="image-20250502111455781.png"></p>
 <p>输入指令开始执行：</p>
@@ -1345,21 +1345,21 @@
 <p><img src="image-20250502111524176.png"></p>
 <h5 id="8-4-1-12-addevc与rmdevc"><a href="#8-4-1-12-addevc与rmdevc" class="headerlink" title="8.4.1.12 addevc与rmdevc"></a>8.4.1.12 <code>addevc</code>与<code>rmdevc</code></h5><p><img src="image-20250502111832116.png"></p>
 <p><img src="image-20250502111847973.png"></p>
-<p>![](屏幕截图 2025-05-02 111907.png)</p>
-<p>![](屏幕截图 2025-05-02 111913.png)</p>
+<p><img src="%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE2025-05-02111907.png"></p>
+<p><img src="%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE2025-05-02111913.png"></p>
 <h5 id="8-4-1-13-kill"><a href="#8-4-1-13-kill" class="headerlink" title="8.4.1.13 kill"></a>8.4.1.13 <code>kill</code></h5><h6 id="8-4-1-13-1-kill-运行态进程"><a href="#8-4-1-13-1-kill-运行态进程" class="headerlink" title="8.4.1.13.1 kill 运行态进程"></a>8.4.1.13.1 kill 运行态进程</h6><p>kill执行前状态：</p>
-<p>![](屏幕截图 2025-05-04 094304.png)</p>
+<p><img src="%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE2025-05-04094304.png"></p>
 <p>kill 1，杀死正在执行的t1进程，可见其运行被终止，且占用的内存资源被释放。</p>
-<p>![](屏幕截图 2025-05-04 094315.png)</p>
+<p><img src="%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE2025-05-04094315.png"></p>
 <h6 id="8-4-1-13-2-kill-就绪态进程"><a href="#8-4-1-13-2-kill-就绪态进程" class="headerlink" title="8.4.1.13.2 kill 就绪态进程"></a>8.4.1.13.2 kill 就绪态进程</h6><p>kill执行前状态：</p>
 <p><img src="image-20250504094041872.png"></p>
 <p>kill 3，杀死在Ready队列的t3，结果如下所示：</p>
 <p><img src="image-20250504094121027.png"></p>
 <p>t3从Ready队列移除，转为Terminate态，释放资源。</p>
 <h6 id="8-4-1-13-3-kill-IO进程"><a href="#8-4-1-13-3-kill-IO进程" class="headerlink" title="8.4.1.13.3 kill IO进程"></a>8.4.1.13.3 kill IO进程</h6><p>kill执行前状态：</p>
-<p>![](屏幕截图 2025-05-04 094519.png)</p>
+<p><img src="%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE2025-05-04094519.png"></p>
 <p>t1正在进行设备IO：</p>
-<p>![](屏幕截图 2025-05-04 094524.png)</p>
+<p><img src="%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE2025-05-04094524.png"></p>
 <p>这个时候执行kill操作：</p>
 <p><img src="image-20250504094623038.png"></p>
 <p>设备释放，程序终止。</p>
@@ -1368,9 +1368,9 @@
 <p>执行kill：</p>
 <p><img src="image-20250504094839116.png"></p>
 <p>资源释放，读锁释放。</p>
-<h5 id="8-4-14-info"><a href="#8-4-14-info" class="headerlink" title="8.4.14 info"></a>8.4.14 <code>info</code></h5><p>![](屏幕截图 2025-05-02 112512.png)</p>
-<p>![](屏幕截图 2025-05-02 112520.png)</p>
-<p>![](屏幕截图 2025-05-02 112530.png)</p>
+<h5 id="8-4-14-info"><a href="#8-4-14-info" class="headerlink" title="8.4.14 info"></a>8.4.14 <code>info</code></h5><p><img src="%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE2025-05-02112512.png"></p>
+<p><img src="%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE2025-05-02112520.png"></p>
+<p><img src="%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE2025-05-02112530.png"></p>
 <h4 id="8-4-2-单CPU进程调度测试"><a href="#8-4-2-单CPU进程调度测试" class="headerlink" title="8.4.2 单CPU进程调度测试"></a>8.4.2 单CPU进程调度测试</h4><p>测试程序：</p>
 <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">t9:</span></span><br><span class="line"><span class="string">C</span> <span class="number">2000</span><span class="comment">#Q#</span></span><br><span class="line"><span class="attr">t10:</span></span><br><span class="line"><span class="string">C</span> <span class="number">3000</span><span class="comment">#Q#</span></span><br><span class="line"><span class="attr">t11:</span></span><br><span class="line"><span class="string">C</span> <span class="number">4000</span><span class="comment">#Q#</span></span><br><span class="line"><span class="attr">t12:</span></span><br><span class="line"><span class="string">C</span> <span class="number">1000</span><span class="comment">#C 2000#Q#</span></span><br><span class="line"><span class="attr">t13:</span></span><br><span class="line"><span class="string">C</span> <span class="number">10000</span><span class="comment">#Q#</span></span><br><span class="line"><span class="attr">t14:</span></span><br><span class="line"><span class="string">C</span> <span class="number">2000</span><span class="comment">#Q#</span></span><br><span class="line"><span class="attr">t15:</span></span><br><span class="line"><span class="string">C</span> <span class="number">2000</span><span class="comment">#Q#</span></span><br><span class="line"><span class="attr">t16:</span></span><br><span class="line"><span class="string">C</span> <span class="number">2000</span><span class="comment">#Q#</span></span><br></pre></td></tr></table></figure>
 
@@ -1499,8 +1499,8 @@
 <p>结果截图：</p>
 <p><img src="image-20250504103441989.png"></p>
 <p><img src="image-20250504103043263.png"></p>
-<p>![](屏幕截图 2025-05-04 103130.png)</p>
-<p>![](屏幕截图 2025-05-04 103139.png)</p>
+<p><img src="%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE2025-05-04103130.png"></p>
+<p><img src="%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE2025-05-04103139.png"></p>
 <p>符合甘特图的描述。</p>
 <h4 id="8-4-5-文件系统测试"><a href="#8-4-5-文件系统测试" class="headerlink" title="8.4.5 文件系统测试"></a>8.4.5 文件系统测试</h4><p>基本功能（文件创建删除修改，目录创建删除切换，磁盘块管理，磁盘空间分配等）已在Shell测试部分完成测试，下面仅测试文件读写互斥性。</p>
 <p>测试程序：</p>
@@ -1513,15 +1513,15 @@
 
 <p>结果截图：</p>
 <p>首先执行写进程t5：</p>
-<p>![](屏幕截图 2025-05-04 105631.png)</p>
-<p>![](屏幕截图 2025-05-04 105551.png)</p>
+<p><img src="%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE2025-05-04105631.png"></p>
+<p><img src="%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE2025-05-04105551.png"></p>
 <p>t5完成后执行写进程t6，图中t5内存块已被释放，代表t5进程已结束执行：</p>
-<p>![](屏幕截图 2025-05-04 105613.png)</p>
-<p>![](屏幕截图 2025-05-04 105606-1746327601179-11.png)</p>
+<p><img src="%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE2025-05-04105613.png"></p>
+<p><img src="%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE2025-05-04105606-1746327601179-11.png"></p>
 <p>t6执行后，t7和t8同时进行读操作：</p>
 <p><img src="image-20250504110038382.png"></p>
-<p>![](屏幕截图 2025-05-04 110031.png)</p>
-<p>![](屏幕截图 2025-05-04 110136.png)</p>
+<p><img src="%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE2025-05-04110031.png"></p>
+<p><img src="%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE2025-05-04110136.png"></p>
 <p>t7和t8读之后同时释放：</p>
 <p><img src="image-20250504110203214.png"></p>
 <h4 id="8-4-6-内存管理测试"><a href="#8-4-6-内存管理测试" class="headerlink" title="8.4.6 内存管理测试"></a>8.4.6 内存管理测试</h4><h5 id="8-4-6-1-测试程序"><a href="#8-4-6-1-测试程序" class="headerlink" title="8.4.6.1 测试程序"></a>8.4.6.1 测试程序</h5><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">m1:</span></span><br><span class="line"><span class="string">C</span> <span class="number">3000</span><span class="comment">#M 10000#C 3000#MR 0 10000#C 3000#MW 100 9000#C 3000#MR 0 10000#C 3000#Q#</span></span><br><span class="line"><span class="attr">m2:</span></span><br><span class="line"><span class="string">C</span> <span class="number">2000</span><span class="comment">#M 100000#C 2000#MW 100 101000#Q#</span></span><br></pre></td></tr></table></figure>
@@ -1623,4 +1623,4 @@
 <p>对于项目管理和团队配合方面，在开始时我对git的使用不够熟练，再加上成员之间的配合有时候不到位，引发了两个人写出两个版本，需要再去合代码的情况，以及未经过测试就提交代码，导致后续开发过程出现障碍的情况。后来通过线下和线上交流，明确了项目具体的需求以及不同成员的分工，成员之间的沟通趋于成熟，极大地促进了项目的完成。</p>
 <p>本次课设还增强了我的编程能力，让我在实践中更加理解java的多态、泛型、单例设计模式、spring boot等内容。</p>
 <p>总的来说，本次课设使我在多方面都得到了成长，给我提供了宝贵的经验，十分感谢成员之间的配合以及老师的指导。</p>
-</div><div class="tags"><ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../../../tags/Java/" rel="tag">Java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../../../tags/Spring-Boot/" rel="tag">Spring Boot</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../../../tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" rel="tag">操作系统</a></li></ul></div><div class="post-nav"><a class="pre" href="../../../05/17/SDN%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86%E4%B8%8EOpenFlow%E5%8D%8F%E8%AE%AE%E5%88%86%E6%9E%90/">SDN基本原理与OpenFlow协议分析</a><a class="next" href="../../01/%E5%89%8D%E7%AB%AF%E7%AC%94%E8%AE%B0/">前端笔记</a></div></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar"><div class="widget"><form class="search-form" action="//www.google.com/search" method="get" accept-charset="utf-8" target="_blank"><input type="text" name="q" maxlength="20" placeholder="Search"/><input type="hidden" name="sitesearch" value="https://trenchance2022.github.io"/></form></div><div class="widget"><div class="author-info"><a class="info-avatar" href="/about/" title="About"><img class="nofancybox" src="/img/trenchance.jpg"/></a><p>Give it your best shot.</p><a class="info-icon" href="https://github.com/trenchance2022" title="Github" target="_blank" style="margin-inline:5px"><img class="nofancybox" src="../../../../img/github.png" style="width: 20px; height: 20px; margin-inline:5px; vertical-align: middle;"/></a><a class="info-icon" href="https://b23.tv/CPgDyCs" title="Bilibili" target="_blank" style="margin-inline:5px"><img class="nofancybox" src="../../../../img/bilibili.png" style="width: 20px; height: 20px; margin-inline:5px; vertical-align: middle;"/></a><a class="info-icon" href="https://www.xiaohongshu.com/user/profile/62bece15000000001b027298" title="小红书" target="_blank" style="margin-inline:5px"><img class="nofancybox" src="../../../../img/xiaohongshu.png" style="width: 20px; height: 20px; margin-inline:5px; vertical-align: middle;"/></a><a class="info-icon" href="mailto:renzg2004@126.com" title="Email" target="_blank" style="margin-inline:5px"><img class="nofancybox" src="../../../../img/mail.png" style="width: 20px; height: 20px; margin-inline:5px; vertical-align: middle;"/></a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"> Categories</i></div></div><div class="widget"><div class="widget-title"><i class="fa fa-star-o"> Tags</i></div><div class="tagcloud"><a href="../../../../tags/SDN/" style="font-size: 15px;">SDN</a> <a href="../../../../tags/OpenFlow/" style="font-size: 15px;">OpenFlow</a> <a href="../../../../tags/%E7%8E%B0%E4%BB%A3%E4%BA%A4%E6%8D%A2%E5%8E%9F%E7%90%86/" style="font-size: 15px;">现代交换原理</a> <a href="../../../../tags/SIP/" style="font-size: 15px;">SIP</a> <a href="../../../../tags/Java/" style="font-size: 15px;">Java</a> <a href="../../../../tags/Spring-Boot/" style="font-size: 15px;">Spring Boot</a> <a href="../../../../tags/vue/" style="font-size: 15px;">vue</a> <a href="../../../../tags/MyBatis/" style="font-size: 15px;">MyBatis</a> <a href="../../../../tags/html/" style="font-size: 15px;">html</a> <a href="../../../../tags/css/" style="font-size: 15px;">css</a> <a href="../../../../tags/javascript/" style="font-size: 15px;">javascript</a> <a href="../../../../tags/axios/" style="font-size: 15px;">axios</a> <a href="../../../../tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" style="font-size: 15px;">操作系统</a> <a href="../../../../tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E7%BB%93%E6%9E%84/" style="font-size: 15px;">计算机系统结构</a> <a href="../../../../tags/Redis/" style="font-size: 15px;">Redis</a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-file-o"> Recent</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="../../../07/15/%E8%8B%8D%E7%A9%B9%E5%A4%96%E5%8D%96%E7%AC%94%E8%AE%B0/">苍穹外卖笔记</a></li><li class="post-list-item"><a class="post-list-link" href="../../../07/01/Java-%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/">Java-基础语法</a></li><li class="post-list-item"><a class="post-list-link" href="../../../06/21/SIP%E5%8D%8F%E8%AE%AE%E5%AE%9E%E9%AA%8C/">SIP协议实验</a></li><li class="post-list-item"><a class="post-list-link" href="../../../06/21/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E7%BB%93%E6%9E%84%E7%AC%94%E8%AE%B0/">计算机系统结构笔记</a></li><li class="post-list-item"><a class="post-list-link" href="../../../06/10/Spring-%E5%85%A8%E6%A0%88%E5%BC%80%E5%8F%91%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">Spring-全栈开发学习笔记</a></li><li class="post-list-item"><a class="post-list-link" href="../../../05/17/SDN%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86%E4%B8%8EOpenFlow%E5%8D%8F%E8%AE%AE%E5%88%86%E6%9E%90/">SDN基本原理与OpenFlow协议分析</a></li><li class="post-list-item"><a class="post-list-link" href="">操作系统课程设计</a></li><li class="post-list-item"><a class="post-list-link" href="../../01/%E5%89%8D%E7%AB%AF%E7%AC%94%E8%AE%B0/">前端笔记</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-external-link"> Links</i></div><ul></ul><a href="https://www.cnblogs.com/Asaka-QianXiang" title="Asaka-QianXiang" target="_blank">Asaka-QianXiang</a><ul></ul><a href="https://github.com/trenchance2022" title="友链招募中" target="_blank">友链招募中</a></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2025 <a href="../../../../." rel="nofollow">Trenchance's Home.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/tufu9441/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/pagecho"> Cho.</a></div></div></div><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="../../../../js/totop.js?v=1.0.0" async></script><script type="text/javascript" src="https://unpkg.com/@fancyapps/fancybox/dist/jquery.fancybox.min.js" async></script><script type="text/javascript" src="../../../../js/fancybox.js?v=1.0.0" async></script><link rel="stylesheet" type="text/css" href="https://unpkg.com/@fancyapps/fancybox/dist/jquery.fancybox.min.css"><script type="text/javascript" src="../../../../js/copycode.js?v=1.0.0" successtext="Copy Successed!"></script><link rel="stylesheet" type="text/css" href="../../../../css/copycode.css?v=1.0.0"><script type="text/javascript" src="../../../../js/codeblock-resizer.js?v=1.0.0"></script><script type="text/javascript" src="../../../../js/smartresize.js?v=1.0.0"></script></div></body></html>
+</div><div class="tags"><ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../../../tags/Java/" rel="tag">Java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../../../tags/Spring-Boot/" rel="tag">Spring Boot</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../../../tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" rel="tag">操作系统</a></li></ul></div><div class="post-nav"><a class="pre" href="../../../05/17/SDN%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86%E4%B8%8EOpenFlow%E5%8D%8F%E8%AE%AE%E5%88%86%E6%9E%90/">SDN基本原理与OpenFlow协议分析</a><a class="next" href="../../01/%E5%89%8D%E7%AB%AF%E7%AC%94%E8%AE%B0/">前端笔记</a></div></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar"><div class="widget"><form class="search-form" action="//www.google.com/search" method="get" accept-charset="utf-8" target="_blank"><input type="text" name="q" maxlength="20" placeholder="Search"/><input type="hidden" name="sitesearch" value="https://trenchance2022.github.io"/></form></div><div class="widget"><div class="author-info"><a class="info-avatar" href="/about/" title="About"><img class="nofancybox" src="/img/trenchance.jpg"/></a><p>Give it your best shot.</p><a class="info-icon" href="https://github.com/trenchance2022" title="Github" target="_blank" style="margin-inline:5px"><img class="nofancybox" src="../../../../img/github.png" style="width: 20px; height: 20px; margin-inline:5px; vertical-align: middle;"/></a><a class="info-icon" href="https://b23.tv/CPgDyCs" title="Bilibili" target="_blank" style="margin-inline:5px"><img class="nofancybox" src="../../../../img/bilibili.png" style="width: 20px; height: 20px; margin-inline:5px; vertical-align: middle;"/></a><a class="info-icon" href="https://www.xiaohongshu.com/user/profile/62bece15000000001b027298" title="小红书" target="_blank" style="margin-inline:5px"><img class="nofancybox" src="../../../../img/xiaohongshu.png" style="width: 20px; height: 20px; margin-inline:5px; vertical-align: middle;"/></a><a class="info-icon" href="mailto:renzg2004@126.com" title="Email" target="_blank" style="margin-inline:5px"><img class="nofancybox" src="../../../../img/mail.png" style="width: 20px; height: 20px; margin-inline:5px; vertical-align: middle;"/></a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"> Categories</i></div></div><div class="widget"><div class="widget-title"><i class="fa fa-star-o"> Tags</i></div><div class="tagcloud"><a href="../../../../tags/Java/" style="font-size: 15px;">Java</a> <a href="../../../../tags/SDN/" style="font-size: 15px;">SDN</a> <a href="../../../../tags/OpenFlow/" style="font-size: 15px;">OpenFlow</a> <a href="../../../../tags/%E7%8E%B0%E4%BB%A3%E4%BA%A4%E6%8D%A2%E5%8E%9F%E7%90%86/" style="font-size: 15px;">现代交换原理</a> <a href="../../../../tags/SIP/" style="font-size: 15px;">SIP</a> <a href="../../../../tags/html/" style="font-size: 15px;">html</a> <a href="../../../../tags/css/" style="font-size: 15px;">css</a> <a href="../../../../tags/javascript/" style="font-size: 15px;">javascript</a> <a href="../../../../tags/vue/" style="font-size: 15px;">vue</a> <a href="../../../../tags/axios/" style="font-size: 15px;">axios</a> <a href="../../../../tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E7%BB%93%E6%9E%84/" style="font-size: 15px;">计算机系统结构</a> <a href="../../../../tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" style="font-size: 15px;">操作系统</a> <a href="../../../../tags/Spring-Boot/" style="font-size: 15px;">Spring Boot</a> <a href="../../../../tags/Redis/" style="font-size: 15px;">Redis</a> <a href="../../../../tags/MyBatis/" style="font-size: 15px;">MyBatis</a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-file-o"> Recent</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="../../../07/15/%E8%8B%8D%E7%A9%B9%E5%A4%96%E5%8D%96%E7%AC%94%E8%AE%B0/">苍穹外卖笔记</a></li><li class="post-list-item"><a class="post-list-link" href="../../../07/01/Java-%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/">Java-基础语法</a></li><li class="post-list-item"><a class="post-list-link" href="../../../06/21/SIP%E5%8D%8F%E8%AE%AE%E5%AE%9E%E9%AA%8C/">SIP协议实验</a></li><li class="post-list-item"><a class="post-list-link" href="../../../06/21/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E7%BB%93%E6%9E%84%E7%AC%94%E8%AE%B0/">计算机系统结构笔记</a></li><li class="post-list-item"><a class="post-list-link" href="../../../06/10/Spring-%E5%85%A8%E6%A0%88%E5%BC%80%E5%8F%91%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">Spring-全栈开发学习笔记</a></li><li class="post-list-item"><a class="post-list-link" href="../../../05/17/SDN%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86%E4%B8%8EOpenFlow%E5%8D%8F%E8%AE%AE%E5%88%86%E6%9E%90/">SDN基本原理与OpenFlow协议分析</a></li><li class="post-list-item"><a class="post-list-link" href="">操作系统课程设计</a></li><li class="post-list-item"><a class="post-list-link" href="../../01/%E5%89%8D%E7%AB%AF%E7%AC%94%E8%AE%B0/">前端笔记</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-external-link"> Links</i></div><ul></ul><a href="https://www.cnblogs.com/Asaka-QianXiang" title="Asaka-QianXiang" target="_blank">Asaka-QianXiang</a><ul></ul><a href="https://github.com/trenchance2022" title="友链招募中" target="_blank">友链招募中</a></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2025 <a href="../../../../." rel="nofollow">Trenchance's Home.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/tufu9441/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/pagecho"> Cho.</a></div></div></div><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="../../../../js/totop.js?v=1.0.0" async></script><script type="text/javascript" src="https://unpkg.com/@fancyapps/fancybox/dist/jquery.fancybox.min.js" async></script><script type="text/javascript" src="../../../../js/fancybox.js?v=1.0.0" async></script><link rel="stylesheet" type="text/css" href="https://unpkg.com/@fancyapps/fancybox/dist/jquery.fancybox.min.css"><script type="text/javascript" src="../../../../js/copycode.js?v=1.0.0" successtext="Copy Successed!"></script><link rel="stylesheet" type="text/css" href="../../../../css/copycode.css?v=1.0.0"><script type="text/javascript" src="../../../../js/codeblock-resizer.js?v=1.0.0"></script><script type="text/javascript" src="../../../../js/smartresize.js?v=1.0.0"></script></div></body></html>
